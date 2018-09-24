@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>JDP 是什么? - 高性能流分析平台</title>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/css/index.css">
+
+
+
+
+</head>
+<body>
+  <div class="nav" >
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="nodeui">
+    <img src="/images/logo.png" width="89"><span>JDP</span>
+    </a>
+    <ul class="nav-item">
+      <li>
+        <form id="search-form">
+          <input type="text" id="search-query" class="search-query st-default-search-input">
+        </form>
+      </li>
+
+      <li><a href="//zh-cn/docs/intro/" alt="指南" class="cur">指南</a></li><li><a href="//zh-cn/page/process.html" alt="Core Data" class="">Core Data</a></li><li><a href="//zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="//zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li><li><a href="//zh-cn/htap/index.html" alt="HTAP" class="">HTAP</a></li>
+
+      <!-- 多语言切换 -->
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/zh-cn">中文</a></li>
+          <li><a href="/en">English</a></li>
+        </ul>
+      </li>
+      
+      <!-- github star星数 -->
+      <li>
+        <iframe src="https://ghbtns.com/github-btn.html?user=Jikelab&repo=jdp&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe>
+      </li>
+      
+    </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+  </header>
+</div>
+
+  <div id="container">
+    <div class="page-main">
+  <article class="markdown-body">
+    <h1>JDP 是什么?</h1>
+    <p><strong>JDP是企业级Core Data &amp; Core AI 流分析平台， JDP全称<code>JDataFlow Platfrom</code></strong>，分析流动中的数据。JDP并不是一个框架，而是一套完整的解决方案，主要包括：</p>
+<ul>
+<li>
+<p>基础理念：<code>JDP</code> 基于Streaming Analytics Visualization架构。</p>
+</li>
+<li>
+<p>开发工具：<code>Ambari</code>，基于Ambari源码扩展，JDP更好的融合Ambari。</p>
+</li>
+<li>
+<p>基础构成：<code>JDP</code>核心基于高性能的分布式关系型数据库构建，支撑万亿数据秒级响应能力。</p>
+</li>
+<li>
+<p>核心功能：<code>JDP</code>核心Core Data &amp; Core AI：</p>
+<ul>
+<li>Core Data提供高度可视化的流数据分析，Streaming Analytics to Visualization。</li>
+<li>Core AI提供分布式系统上的AI能力，Smart Application。</li>
+</ul>
+</li>
+<li>
+<p>基础运维：开箱即用，可视化运维管理系统<code>Ambari Manager</code>：</p>
+<ul>
+<li>提供核心的服务管理与配置中心功能，保障集群的稳定可靠。</li>
+<li>简单高效的管理大规模分布式系统，仅需专注业务应用。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/intro/img/JDataFlow-Pratfrom.png" alt="JDataFlow"></p>
+<h2 id="设计原则"><a class="markdown-anchor" href="#设计原则">#</a> 设计原则</h2>
+<ul>
+<li>Internet of Things (IoT)，连接一切的时代，数据在流动中被处理。</li>
+<li>JDP流分析平台，简单高性能的数据分析，Core Data遵循分布式系统设计原则。</li>
+<li>遵循企业现有服务体系。无缝融入现有企业数据中心系统，可直接交互数据。</li>
+</ul>
+<h2 id="特性"><a class="markdown-anchor" href="#特性">#</a> 特性</h2>
+<ul>
+<li>One-stop solution：开箱即用 &amp; 简单 &amp; 易用。</li>
+<li>高性能：万亿数据秒级响应，提供PB级数据存储。</li>
+<li>扩展性：规模化部署，可达几百台集群规模。</li>
+<li>可视化：可视化的数据收集、数据存储、数据分析、数据报表。</li>
+<li>可靠性：集群提供副本容错机制，硬件故障不会造成数据丢失。</li>
+<li>简单运维：日志、监控、报警、配置、服务一栈式管理。</li>
+<li>简单易用：提供标准SQL，拖拽式数据分析。</li>
+</ul>
+<h2 id="什么样的项目适合用jdp"><a class="markdown-anchor" href="#什么样的项目适合用jdp">#</a> 什么样的项目适合用JDP</h2>
+<p>目前JDP的定位主要是<code>流数据处理能力</code>及<code>结构数据管理能力</code>。基于这两大能力，JDP有自己的特定应用场景。主要如下：</p>
+<ul>
+<li>流数据处理</li>
+<li>即席查询</li>
+<li>海量日志分析</li>
+<li>实时数据采集</li>
+<li>实时数据流转</li>
+<li>数据可视化</li>
+</ul>
+
+  </article>
+  
+  <aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    
+    <ul><li><a href="//zh-cn/docs/intro/" alt="指南" class="cur">指南</a></li><li><a href="//zh-cn/page/process.html" alt="Core Data" class="">Core Data</a></li><li><a href="//zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="//zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li><li><a href="//zh-cn/htap/index.html" alt="HTAP" class="">HTAP</a></li></ul>
+  </div>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="//zh-cn/docs/intro/index.html" class="cur">JDP 是什么</a></li><li><a href="//zh-cn/docs/intro/quickstart.html" class="">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="//zh-cn/docs/basics/function.html" class="">功能概览</a></li><li><a href="//zh-cn/docs/basics/collection.html" class="">数据融合</a></li><li><a href="//zh-cn/docs/basics/analysis.html" class="">数据分析</a></li><li><a href="//zh-cn/docs/basics/visualization.html" class="">数据展现</a></li><li><a href="//zh-cn/docs/basics/application.html" class="">数据应用</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="//zh-cn/docs/core/dataflow.html" class="">数据流</a></li><li><a href="//zh-cn/docs/core/dbms.html" class="">数据存储</a></li><li><a href="//zh-cn/docs/core/datalab.html" class="">数据探索</a></li><li><a href="//zh-cn/docs/core/development.html" class="">本地开发</a></li><li><a href="//zh-cn/docs/core/planning.html" class="">规划部署</a></li><li><a href="//zh-cn/docs/core/runtime.html" class="">运维管理</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="//zh-cn/docs/advanced/architecture.html" class="">架构概览</a></li><li><a href="//zh-cn/docs/advanced/build.html" class="">系统构建</a></li><li><a href="//zh-cn/docs/advanced/roadmap.html" class="">路线图</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="//zh-cn/docs/community/contributing.html" class="">如何贡献</a></li><li><a href="//zh-cn/docs/community/memberguide.html" class="">成员指南</a></li><li><a href="//zh-cn/docs/community/resource.html" class="">资源</a></li></ul></dd><dt>常见问题</dt><dd><ul><li><a href="//zh-cn/docs/faq/deploy.html" class="">部署问题</a></li><li><a href="//zh-cn/docs/faq/debug.html" class="">集群调试</a></li></ul></dd></dl>
+</aside>
+<script src="/js/mobile-aside.js"></script>
+
+</div>
+
+  </div>
+</body>
+<!-- <script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
+<script> 
+docsearch({
+  apiKey: '1561de31a86f79507ea00cdb54ce647c',
+  indexName: 'eggjs',
+  inputSelector: '#search-query',
+  // debug: true // Set debug to true if you want to inspect the dropdown
+});
+</script> -->
+</html>

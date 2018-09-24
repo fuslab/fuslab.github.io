@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>JDP Core Data - 高性能流分析平台</title>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/css/index.css">
+
+
+
+
+</head>
+<body>
+  <div class="nav" >
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="nodeui">
+    <img src="/images/logo.png" width="89"><span>JDP</span>
+    </a>
+    <ul class="nav-item">
+      <li>
+        <form id="search-form">
+          <input type="text" id="search-query" class="search-query st-default-search-input">
+        </form>
+      </li>
+
+      <li><a href="//zh-cn/docs/intro/" alt="指南" class="">指南</a></li><li><a href="//zh-cn/page/process.html" alt="Core Data" class="cur">Core Data</a></li><li><a href="//zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="//zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li><li><a href="//zh-cn/htap/index.html" alt="HTAP" class="">HTAP</a></li>
+
+      <!-- 多语言切换 -->
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/zh-cn">中文</a></li>
+          <li><a href="/en">English</a></li>
+        </ul>
+      </li>
+      
+      <!-- github star星数 -->
+      <li>
+        <iframe src="https://ghbtns.com/github-btn.html?user=Jikelab&repo=jdp&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe>
+      </li>
+      
+    </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+  </header>
+</div>
+
+  <div id="container">
+    <!-- 增加header样式 -->
+<header class="post-titlt">
+	<h1 class="docs-header">
+		<div class="container">
+		  <i class="fa-flag-checkered fa"></i> JDP Core Data
+	    </div>
+	</h1>
+</header>
+
+<div class="page-main post">
+  <article class="markdown-body">
+
+    <p>如果当前你的数据分析团队陷入了如下的困惑：</p>
+<ul>
+<li>Hadoop生态圈复杂的技术栈</li>
+<li>超高的学习成本与投入收效甚微</li>
+<li>是否有一栈式方案，简单易上手</li>
+<li>超大数据集处理，效率低下</li>
+<li>海量数据流动，处理维护成本高昂</li>
+<li>多平台数据融合，运维开发成本高</li>
+</ul>
+<p>那么，恭喜你，JDP流分析平台，是非常适合你的。</p>
+<p>JDP流分析平台是一套高性能实时数据处理解决方案，底层构建在分布式数据库，分布式数据收集系统。</p>
+<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/page/img/JDP-Core-Data.png" alt="JDP-Core-Data"></p>
+<p>我们的接入流程是：</p>
+<h4 id="1-数据评估"><a class="markdown-anchor" href="#1-数据评估">#</a> 1. 数据评估</h4>
+<p>如果你想直接把自己的业务接入JDP平台，那么需要首先评估业务的数据量，建立JDP集群。主要包括 <code>数据量级</code> ， <code>数据增量</code>及<code>响应延迟</code>。</p>
+<table>
+<thead>
+<tr>
+<th>业务</th>
+<th>增量</th>
+<th>总量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>10T</td>
+<td>50T</td>
+</tr>
+<tr>
+<td>B</td>
+<td>1T</td>
+<td>10T</td>
+</tr>
+<tr>
+<td>C</td>
+<td>3T</td>
+<td>100T</td>
+</tr>
+<tr>
+<td>D</td>
+<td>5T</td>
+<td>500T</td>
+</tr>
+</tbody>
+</table>
+<p>无副本：</p>
+<blockquote>
+<p>集群规模N=((总数据量+总增量)+0.2*(总数据量+总增量))/48T</p>
+<p>N = 18 node</p>
+</blockquote>
+<p>2副本：</p>
+<blockquote>
+<p>集群规模N=(((总数据量+总增量)+0.2*(总数据量+总增量)))*2/48T</p>
+<p>N = 33 node</p>
+</blockquote>
+<p>3副本：</p>
+<blockquote>
+<p>集群规模N=(((总数据量+总增量)+0.2*(总数据量+总增量)))*3/48T</p>
+<p>N = 50 node</p>
+</blockquote>
+<h4 id="2-分析场景"><a class="markdown-anchor" href="#2-分析场景">#</a> 2. 分析场景</h4>
+<table>
+<thead>
+<tr>
+<th>业务</th>
+<th>响应</th>
+<th>事物</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>秒级</td>
+<td>OLTP</td>
+</tr>
+<tr>
+<td>B</td>
+<td>分钟级</td>
+<td>OLAP</td>
+</tr>
+<tr>
+<td>C</td>
+<td>毫秒级</td>
+<td>OLAP</td>
+</tr>
+<tr>
+<td>D</td>
+<td>小时级</td>
+<td>OLAP</td>
+</tr>
+</tbody>
+</table>
+<p>目前JDP流分析平台，主要场景是高性能OLAP场景，未来考虑HTAP混合型场景，同事支持OLAP &amp; OLTP的分布式数据库产品。</p>
+<h4 id="2-业务迁移"><a class="markdown-anchor" href="#2-业务迁移">#</a> 2. 业务迁移</h4>
+<p>[1] 历史库可直接同步通过remote表实现，TB级高效率传输。</p>
+<p>[2] MySQL数据库binlog，实时同步，支持Change Data Capture (CDC)</p>
+<p>[3] Kafka Topic海量实时数据接入</p>
+<p>[4] 标准化数据协议，分布式多点agent数据收集，Native Agent Collection</p>
+<p>[5] 实时数据可视化系统，支持主流数据库</p>
+<p>[6] 高度可视化的数据收集器，数据秒级转化</p>
+
+  </article>
+  
+  <aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    
+    <ul><li><a href="//zh-cn/docs/intro/" alt="指南" class="">指南</a></li><li><a href="//zh-cn/page/process.html" alt="Core Data" class="cur">Core Data</a></li><li><a href="//zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="//zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li><li><a href="//zh-cn/htap/index.html" alt="HTAP" class="">HTAP</a></li></ul>
+  </div>
+  <dl></dl>
+</aside>
+<script src="/js/mobile-aside.js"></script>
+
+</div>
+
+
+
+  </div>
+</body>
+<!-- <script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
+<script> 
+docsearch({
+  apiKey: '1561de31a86f79507ea00cdb54ce647c',
+  indexName: 'eggjs',
+  inputSelector: '#search-query',
+  // debug: true // Set debug to true if you want to inspect the dropdown
+});
+</script> -->
+</html>

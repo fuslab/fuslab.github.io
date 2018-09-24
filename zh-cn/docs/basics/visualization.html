@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>数据展现 - 高性能流分析平台</title>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/css/index.css">
+
+
+
+
+</head>
+<body>
+  <div class="nav" >
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="nodeui">
+    <img src="/images/logo.png" width="89"><span>JDP</span>
+    </a>
+    <ul class="nav-item">
+      <li>
+        <form id="search-form">
+          <input type="text" id="search-query" class="search-query st-default-search-input">
+        </form>
+      </li>
+
+      <li><a href="//zh-cn/docs/intro/" alt="指南" class="">指南</a></li><li><a href="//zh-cn/page/process.html" alt="Core Data" class="">Core Data</a></li><li><a href="//zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="//zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li><li><a href="//zh-cn/htap/index.html" alt="HTAP" class="">HTAP</a></li>
+
+      <!-- 多语言切换 -->
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/zh-cn">中文</a></li>
+          <li><a href="/en">English</a></li>
+        </ul>
+      </li>
+      
+      <!-- github star星数 -->
+      <li>
+        <iframe src="https://ghbtns.com/github-btn.html?user=Jikelab&repo=jdp&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe>
+      </li>
+      
+    </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+  </header>
+</div>
+
+  <div id="container">
+    <div class="page-main">
+  <article class="markdown-body">
+    <h1>数据展现</h1>
+    <p>数据可视化，由一个现代化的企业级商业智能Web应用程序Superset提供服务。</p>
+<p>提供丰富的数据可视化集，一个易于使用的界面，用于探索和可视化数据。</p>
+<p>高度可定制化数据可视化工具。</p>
+<p>推荐的数据库连接软件包：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">database</th>
+<th style="text-align:center">pypi package</th>
+<th style="text-align:center">SQLAlchemy URI prefix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">MySQL</td>
+<td style="text-align:center">pip install mysqlclient</td>
+<td style="text-align:center">mysql://</td>
+</tr>
+<tr>
+<td style="text-align:left">Postgres</td>
+<td style="text-align:center">pip install psycopg2</td>
+<td style="text-align:center">postgresql+psycopg2://</td>
+</tr>
+<tr>
+<td style="text-align:left">Presto</td>
+<td style="text-align:center">pip install pyhive</td>
+<td style="text-align:center">presto://</td>
+</tr>
+<tr>
+<td style="text-align:left">Oracle</td>
+<td style="text-align:center">pip install cx_Oracle</td>
+<td style="text-align:center">oracle://</td>
+</tr>
+<tr>
+<td style="text-align:left">sqlite</td>
+<td style="text-align:center">default support</td>
+<td style="text-align:center">sqlite://</td>
+</tr>
+<tr>
+<td style="text-align:left">Redshift</td>
+<td style="text-align:center">pip install sqlalchemy-redshift</td>
+<td style="text-align:center">redshift+psycopg2://</td>
+</tr>
+<tr>
+<td style="text-align:left">MSSQL</td>
+<td style="text-align:center">pip install pymssql</td>
+<td style="text-align:center">mssql://</td>
+</tr>
+<tr>
+<td style="text-align:left">Impala</td>
+<td style="text-align:center">pip install pyhive</td>
+<td style="text-align:center">jdbc+hive://</td>
+</tr>
+<tr>
+<td style="text-align:left">SparkSQL</td>
+<td style="text-align:center">pip install sqlalchemy-redshift</td>
+<td style="text-align:center">redshift+psycopg2://</td>
+</tr>
+<tr>
+<td style="text-align:left">Greenplum</td>
+<td style="text-align:center">pip install psycopg2</td>
+<td style="text-align:center">postgresql+psycopg2://</td>
+</tr>
+<tr>
+<td style="text-align:left">Athena</td>
+<td style="text-align:center">pip install &quot;PyAthenaJDBC&gt;1.0.9&quot;</td>
+<td style="text-align:center">awsathena+jdbc://</td>
+</tr>
+<tr>
+<td style="text-align:left">Vertica</td>
+<td style="text-align:center">pip install sqlalchemy-vertica-python</td>
+<td style="text-align:center">vertica+vertica_python://</td>
+</tr>
+<tr>
+<td style="text-align:left">ClickHouse</td>
+<td style="text-align:center">pip install sqlalchemy-clickhouse</td>
+<td style="text-align:center">clickhouse://</td>
+</tr>
+<tr>
+<td style="text-align:left">Kylin</td>
+<td style="text-align:center">pip install kylinpy</td>
+<td style="text-align:center">kylin://</td>
+</tr>
+</tbody>
+</table>
+<p>目前JDP Package提供的Superset安装包，默认支持<code>MySQL</code>、<code>Postgres</code>、<code>Presto</code>、<code>sqlite</code>、<code>Impala</code>、<code>SparkSQL</code>、<code>Greenplum</code>、<code>ClickHouse</code>。</p>
+<p>Ambari管理Superset界面提供<code>Quick Links</code>，访问Superset databaseview，配置<code>数据源</code> -&gt; <code>数据库</code>添加ClickHouse DataSource，格式如下：</p>
+<ul>
+<li>ClickHouse
+<ul>
+<li>连接地址：clickhouse://admin:admin@clickhouse_host_address:8123/default</li>
+<li>用户名：admin    # 默认 JDP</li>
+<li>密码：amdin      # 默认 JDP</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>注：<code>ClickHouse</code>集群，默认还提供只读用户<code>ck/admin</code>。</p>
+</blockquote>
+<ul>
+<li>MySQL
+<ul>
+<li>连接地址：mysql://user:password@your_mysql_address:3306/database</li>
+<li>用户名：user</li>
+<li>密码： password</li>
+</ul>
+</li>
+</ul>
+<h2 id="screenshots"><a class="markdown-anchor" href="#screenshots">#</a> Screenshots</h2>
+<p><img src="https://camo.githubusercontent.com/82e264ef777ba06e1858766fe3b8817ee108eb7e/687474703a2f2f672e7265636f726469742e636f2f784658537661475574732e676966" alt=""></p>
+<p><img src="https://camo.githubusercontent.com/4991ff37a0005ea4e4267919a52786fda82d2d21/687474703a2f2f672e7265636f726469742e636f2f755a6767594f645235672e676966" alt=""></p>
+<p><img src="https://camo.githubusercontent.com/a389af15ac1e32a3d0fee941b4c62c850b1d583b/687474703a2f2f672e7265636f726469742e636f2f55373046574c704c76682e676966" alt=""></p>
+
+  </article>
+  
+  <aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    
+    <ul><li><a href="//zh-cn/docs/intro/" alt="指南" class="">指南</a></li><li><a href="//zh-cn/page/process.html" alt="Core Data" class="">Core Data</a></li><li><a href="//zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="//zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li><li><a href="//zh-cn/htap/index.html" alt="HTAP" class="">HTAP</a></li></ul>
+  </div>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="//zh-cn/docs/intro/index.html" class="">JDP 是什么</a></li><li><a href="//zh-cn/docs/intro/quickstart.html" class="">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="//zh-cn/docs/basics/function.html" class="">功能概览</a></li><li><a href="//zh-cn/docs/basics/collection.html" class="">数据融合</a></li><li><a href="//zh-cn/docs/basics/analysis.html" class="">数据分析</a></li><li><a href="//zh-cn/docs/basics/visualization.html" class="cur">数据展现</a></li><li><a href="//zh-cn/docs/basics/application.html" class="">数据应用</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="//zh-cn/docs/core/dataflow.html" class="">数据流</a></li><li><a href="//zh-cn/docs/core/dbms.html" class="">数据存储</a></li><li><a href="//zh-cn/docs/core/datalab.html" class="">数据探索</a></li><li><a href="//zh-cn/docs/core/development.html" class="">本地开发</a></li><li><a href="//zh-cn/docs/core/planning.html" class="">规划部署</a></li><li><a href="//zh-cn/docs/core/runtime.html" class="">运维管理</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="//zh-cn/docs/advanced/architecture.html" class="">架构概览</a></li><li><a href="//zh-cn/docs/advanced/build.html" class="">系统构建</a></li><li><a href="//zh-cn/docs/advanced/roadmap.html" class="">路线图</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="//zh-cn/docs/community/contributing.html" class="">如何贡献</a></li><li><a href="//zh-cn/docs/community/memberguide.html" class="">成员指南</a></li><li><a href="//zh-cn/docs/community/resource.html" class="">资源</a></li></ul></dd><dt>常见问题</dt><dd><ul><li><a href="//zh-cn/docs/faq/deploy.html" class="">部署问题</a></li><li><a href="//zh-cn/docs/faq/debug.html" class="">集群调试</a></li></ul></dd></dl>
+</aside>
+<script src="/js/mobile-aside.js"></script>
+
+</div>
+
+  </div>
+</body>
+<!-- <script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
+<script> 
+docsearch({
+  apiKey: '1561de31a86f79507ea00cdb54ce647c',
+  indexName: 'eggjs',
+  inputSelector: '#search-query',
+  // debug: true // Set debug to true if you want to inspect the dropdown
+});
+</script> -->
+</html>

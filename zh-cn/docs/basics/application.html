@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>数据应用 - 高性能流分析平台</title>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/css/index.css">
+
+
+
+
+</head>
+<body>
+  <div class="nav" >
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="nodeui">
+    <img src="/images/logo.png" width="89"><span>JDP</span>
+    </a>
+    <ul class="nav-item">
+      <li>
+        <form id="search-form">
+          <input type="text" id="search-query" class="search-query st-default-search-input">
+        </form>
+      </li>
+
+      <li><a href="//zh-cn/docs/intro/" alt="指南" class="">指南</a></li><li><a href="//zh-cn/page/process.html" alt="Core Data" class="">Core Data</a></li><li><a href="//zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="//zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li><li><a href="//zh-cn/htap/index.html" alt="HTAP" class="">HTAP</a></li>
+
+      <!-- 多语言切换 -->
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/zh-cn">中文</a></li>
+          <li><a href="/en">English</a></li>
+        </ul>
+      </li>
+      
+      <!-- github star星数 -->
+      <li>
+        <iframe src="https://ghbtns.com/github-btn.html?user=Jikelab&repo=jdp&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe>
+      </li>
+      
+    </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+  </header>
+</div>
+
+  <div id="container">
+    <div class="page-main">
+  <article class="markdown-body">
+    <h1>数据应用</h1>
+    <p><strong>JDP是企业级Core Data &amp; Core AI 流分析平台， JDP全称<code>JDataFlow Platfrom</code></strong></p>
+<p>JDP平台强大的<code>Data Pipline</code>和<code>Visualization Data</code>功能，可以支持实时数据分析。</p>
+<p>接下来，我们通过一个简单的示例，帮助你入门JDP流分析平台。</p>
+<h2 id="tailfile-to-clickhouse"><a class="markdown-anchor" href="#tailfile-to-clickhouse">#</a> TailFile To ClickHouse</h2>
+<p>我们通过在集群中任意节点监控<code>/var/log/insert.log</code>文件变化，实时获取最新数据入库到<code>ClickHouse</code>，并且通过<code>Superset</code>做实时数据可视化。</p>
+<p>在<a href="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/collection.html" target="_blank" rel="noopener">数据融合</a>内容，我们有列表支持的数据源，如下是基础的监控文件功能，同步数据。</p>
+<h3 id="1-实时数据流程"><a class="markdown-anchor" href="#1-实时数据流程">#</a> [1] 实时数据流程</h3>
+<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/dataflow-tailfile.png" alt="dataflow_tailfile"></p>
+<p>如图，我们配置Data Process <code>TailFile</code>，实时监控<code>/var/log/insert.log</code>文件，同步新增数据，经过<code>SplitText</code>设置规则按行分割，通过<code>PublishKafka</code>写入kafka的一个Topic中，Topic Name是<code>t</code>。</p>
+<p>另起一个新流程，通过<code>ConsumeKafka</code>实时获取变更数据，通过<code>InvokeHTTP</code>发送<code>POST</code>请求，写入最新的数据到<code>ClickHouse</code>。</p>
+<p>如果一次生成<code>100w</code>数据写，经过测试，入库非常缓慢，甚至有数据丢失，这是clickhouse不建议的入库方式。最佳选择是通过Batch方式每次10w以上入库。通过上面的方式会每条数据产生一次<code>POST</code>,造成底层大量小文件生成。</p>
+<p>如果在入库中间增加一个<code>Data Merge</code>流程，整体性能会好很多，如果希望clickhouse直接实时入库数据，实时查询，那么建议在底层<code>Merge Tree</code>引擎表基础上，建立<code>Buffer</code>引擎表，通过Buffer引擎表缓冲，最后才落盘到<code>Merge Tree</code>引擎表，类似：</p>
+<p>创建源表：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">create table t (gmt  Date, id UInt16, name String, point UInt16) ENGINE=MergeTree(gmt, (id, name), 10);</span><br></pre></td></tr></table></figure></p>
+<p>创建Buffer表：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">create table t_buffer as t ENGINE=Buffer(default, t, 16, 3, 20, 2, 10, 1, 10000)</span><br></pre></td></tr></table></figure></p>
+<p>Buffer 引擎，像是 Memory 存储的一个上层应用似的（磁盘上也是没有相应目录的）。它的行为是一个缓冲区，写入的数据先被放在缓冲区，达到一个阈值后，这些数据会自动被写到指定的另一个表中。</p>
+<p>目前ClickHouse引擎是一种默认选择，也可支持其他DBMS/NoSQL入库，我们希望通过一个简单的示例，帮助你快速搭建基于JDP流分析平台。</p>
+<p>甚至你可以扩展JDP平台中实时数据接入模块功能，实时可视化配置实时数据到更多系统。</p>
+<p>目前已支持主流数据系统，可在<a href="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/collection.html" target="_blank" rel="noopener">数据融合</a>和<a href="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/visualization.html" target="_blank" rel="noopener">数据展现</a>章节查看。</p>
+<h3 id="2-实时数据生成"><a class="markdown-anchor" href="#2-实时数据生成">#</a> [2] 实时数据生成</h3>
+<p>通过<code>InsertDataFile.py</code>程序写入数据到<code>/var/log/insert.log</code>文件，每次控制写入数据条数，通过输入参数控制。</p>
+<p>例如：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">python InsertDataFile.py 10</span><br></pre></td></tr></table></figure></p>
+<p><code>/var/log/insert.log</code>文件中写入<code>10</code>条数据。</p>
+<p>样本:</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(0, &apos;王玉&apos;, now(), CAST(now() AS Date))</span><br><span class="line">(1, &apos;王玉立&apos;, now(), CAST(now() AS Date))</span><br><span class="line">(2, &apos;金军玲&apos;, now(), CAST(now() AS Date))</span><br><span class="line">(3, &apos;李龙玲&apos;, now(), CAST(now() AS Date))</span><br><span class="line">(4, &apos;金芳国&apos;, now(), CAST(now() AS Date))</span><br><span class="line">(5, &apos;李龙&apos;, now(), CAST(now() AS Date))</span><br></pre></td></tr></table></figure></p>
+<p>通过组装<code>query=INSERT INTO t VALUES (5, '李龙', now(), CAST(now() AS Date))</code>语句发送到ClickHouse执行，如果<code>CDCMYSQL</code>需要获取<code>Insert</code>或者<code>Update</code>导致数据变更的语句发送到ClickHouse或者其他数据库执行，在MYSQLCDC内容进一步介绍。</p>
+<p>建表:</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE TABLE t</span><br><span class="line">(</span><br><span class="line">    id UInt64,</span><br><span class="line">    name String,</span><br><span class="line">    createDate DateTime,</span><br><span class="line">    FlightDate Date</span><br><span class="line">) ENGINE = MergeTree(FlightDate, (id, FlightDate), 8192);</span><br></pre></td></tr></table></figure></p>
+<p>如上，数据比较简单，程序自动生成name，id自增，其它字段是通过clickhouse函数生成。</p>
+<p>入库:</p>
+<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/select_t_sample.png" alt=""></p>
+<h3 id="3-实时数据展现"><a class="markdown-anchor" href="#3-实时数据展现">#</a> [3] 实时数据展现</h3>
+<p>在<code>[2]</code>中我们往<code>[1]</code>流程监控的文件中写入<code>10</code>条数据，我们通过下图可看到数据变化。</p>
+<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/clickhouse-superset-datav.gif" alt=""></p>
+<p>如图，通过<code>Superset</code>查询ClickHouse表数据，实时分析总用户数和随机生成用户同名情况分布。</p>
+<p>Download <a href="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/tailfile-to-clickhouse.xml" target="_blank" rel="noopener">tailfile-to-clickhouse.xml</a></p>
+<h2 id="mysqlcdc-to-clickhosue"><a class="markdown-anchor" href="#mysqlcdc-to-clickhosue">#</a> MySQLCDC To ClickHosue</h2>
+<p><strong>Install MYSQL For CentOS 7.x</strong></p>
+<p>[1] 下载和添加MySQL仓库，然后更新。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm</span><br><span class="line">sudo rpm -ivh mysql-community-release-el7-5.noarch.rpm</span><br><span class="line">yum update</span><br></pre></td></tr></table></figure></p>
+<p>[2] 安装MySQL，然后启动。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo yum install mysql-server</span><br><span class="line">sudo systemctl start mysqld</span><br></pre></td></tr></table></figure></p>
+<p>[3] 初始化MySQL，设置一些基本信息。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo mysql_secure_installation</span><br></pre></td></tr></table></figure></p>
+<p>注意：此处会设置root用户登录密码，请记住它。</p>
+<p>[4] 使用MySQL</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure></p>
+<p>[5] MySQL开启binlog</p>
+<p>在my.cnf加入以下配置开启binary logging。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">server_id = 1</span><br><span class="line">log_bin = delta</span><br><span class="line">binlog_format = row</span><br><span class="line">binlog_do_db = source</span><br></pre></td></tr></table></figure></p>
+<p>创建数据库和表。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">create database source;</span><br><span class="line">create database copy;</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt; use source;</span><br><span class="line">mysql&gt; CREATE TABLE `users` ( </span><br><span class="line">`id` mediumint(9) NOT NULL AUTO_INCREMENT PRIMARY KEY, </span><br><span class="line">`title` text, </span><br><span class="line">`first` text, </span><br><span class="line">`last` text, </span><br><span class="line">`street` text, </span><br><span class="line">`city` text, </span><br><span class="line">`state` text, </span><br><span class="line">`zip` text, </span><br><span class="line">`gender` text, </span><br><span class="line">`email` text, </span><br><span class="line">`username` text, </span><br><span class="line">`password` text, </span><br><span class="line">`phone` text, </span><br><span class="line">`cell` text, </span><br><span class="line">`ssn` text, </span><br><span class="line">`date_of_birth` timestamp NULL DEFAULT NULL, </span><br><span class="line">`reg_date` timestamp NULL DEFAULT NULL, </span><br><span class="line">`large` text, </span><br><span class="line">`medium` text, </span><br><span class="line">`thumbnail` text, </span><br><span class="line">`version` text, </span><br><span class="line">`nationality` text) </span><br><span class="line">ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;</span><br></pre></td></tr></table></figure></p>
+<p>为user表插入数据。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INSERT INTO `users` (`id`, `title`, `first`, `last`, `street`, `city`, `state`, `zip`, `gender`, `email`, `username`, `password`, `phone`, `cell`, `ssn`, `date_of_birth`, `reg_date`, `large`, `medium`, `thumbnail`, `version`, `nationality`) </span><br><span class="line">VALUES (1, &apos;miss&apos;, &apos;marlene&apos;, &apos;shaw&apos;, &apos;3450 w belt line rd&apos;, &apos;abilene&apos;, &apos;florida&apos;, &apos;31995&apos;, &apos;F&apos;, &apos;marlene.shaw75@example.com&apos;, &apos;goldenpanda70&apos;, &apos;naughty&apos;, &apos;(176)-908-6931&apos;, &apos;(711)-565-2194&apos;, &apos;800-71-1872&apos;, &apos;1991-10-07 00:22:53&apos;, &apos;2004-01-29 16:19:10&apos;, &apos;http://api.randomuser.me/portraits/women/67.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/women/67.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/women/67.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(2, &apos;ms&apos;, &apos;letitia&apos;, &apos;jordan&apos;, &apos;2974 mockingbird hill&apos;, &apos;irvine&apos;, &apos;new jersey&apos;, &apos;64361&apos;, &apos;F&apos;, &apos;letitia.jordan64@example.com&apos;, &apos;lazytiger614&apos;, &apos;aaaaa1&apos;, &apos;(860)-602-3314&apos;, &apos;(724)-685-3472&apos;, &apos;548-93-7031&apos;, &apos;1977-11-14 11:58:01&apos;, &apos;2002-02-09 17:04:59&apos;, &apos;http://api.randomuser.me/portraits/women/19.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/women/19.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/women/19.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(3, &apos;mr&apos;, &apos;todd&apos;, &apos;graham&apos;, &apos;5760 spring hill rd&apos;, &apos;garden grove&apos;, &apos;north carolina&apos;, &apos;81790&apos;, &apos;M&apos;, &apos;todd.graham39@example.com&apos;, &apos;purplekoala484&apos;, &apos;paintball&apos;, &apos;(230)-874-6532&apos;, &apos;(186)-529-4912&apos;, &apos;362-31-5248&apos;, &apos;2006-07-25 05:48:01&apos;, &apos;2004-12-05 11:26:34&apos;, &apos;http://api.randomuser.me/portraits/men/39.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/men/39.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/men/39.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(4, &apos;mr&apos;, &apos;seth&apos;, &apos;martinez&apos;, &apos;4377 fincher rd&apos;, &apos;chandler&apos;, &apos;south carolina&apos;, &apos;73651&apos;, &apos;M&apos;, &apos;seth.martinez82@example.com&apos;, &apos;bigbutterfly149&apos;, &apos;navy&apos;, &apos;(122)-782-5822&apos;, &apos;(720)-778-8541&apos;, &apos;200-80-9087&apos;, &apos;1981-02-28 08:22:49&apos;, &apos;2009-08-31 12:42:57&apos;, &apos;http://api.randomuser.me/portraits/men/96.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/men/96.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/men/96.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(5, &apos;mr&apos;, &apos;guy&apos;, &apos;mckinney&apos;, &apos;4524 hogan st&apos;, &apos;iowa park&apos;, &apos;ohio&apos;, &apos;24140&apos;, &apos;M&apos;, &apos;guy.mckinney53@example.com&apos;, &apos;blueduck623&apos;, &apos;office&apos;, &apos;(309)-556-7859&apos;, &apos;(856)-764-9146&apos;, &apos;973-37-9077&apos;, &apos;1983-11-03 22:02:12&apos;, &apos;2003-10-20 07:23:06&apos;, &apos;http://api.randomuser.me/portraits/men/24.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/men/24.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/men/24.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(6, &apos;ms&apos;, &apos;anna&apos;, &apos;smith&apos;, &apos;5047 cackson st&apos;, &apos;rancho cucamonga&apos;, &apos;pennsylvania&apos;, &apos;56486&apos;, &apos;F&apos;, &apos;anna.smith74@example.com&apos;, &apos;goldenfish121&apos;, &apos;albion&apos;, &apos;(335)-388-7351&apos;, &apos;(485)-150-6348&apos;, &apos;680-20-6440&apos;, &apos;1977-09-05 16:08:05&apos;, &apos;2008-07-11 11:09:12&apos;, &apos;http://api.randomuser.me/portraits/women/89.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/women/89.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/women/89.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(7, &apos;mr&apos;, &apos;johnny&apos;, &apos;johnson&apos;, &apos;7250 bruce st&apos;, &apos;gresham&apos;, &apos;new mexico&apos;, &apos;83973&apos;, &apos;M&apos;, &apos;johnny.johnson73@example.com&apos;, &apos;crazyduck127&apos;, &apos;toast&apos;, &apos;(142)-971-3099&apos;, &apos;(991)-131-1582&apos;, &apos;683-26-4133&apos;, &apos;1988-08-12 14:04:27&apos;, &apos;2001-04-30 15:32:34&apos;, &apos;http://api.randomuser.me/portraits/men/78.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/men/78.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/men/78.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(8, &apos;mrs&apos;, &apos;robin&apos;, &apos;white&apos;, &apos;7882 northaven rd&apos;, &apos;orlando&apos;, &apos;connecticut&apos;, &apos;40452&apos;, &apos;F&apos;, &apos;robin.white46@example.com&apos;, &apos;whitetiger371&apos;, &apos;elizabeth&apos;, &apos;(311)-659-3812&apos;, &apos;(689)-468-6420&apos;, &apos;960-70-3399&apos;, &apos;2003-07-05 13:09:41&apos;, &apos;2014-10-01 02:54:46&apos;, &apos;http://api.randomuser.me/portraits/women/82.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/women/82.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/women/82.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(9, &apos;miss&apos;, &apos;allison&apos;, &apos;williams&apos;, &apos;7648 edwards rd&apos;, &apos;edison&apos;, &apos;louisiana&apos;, &apos;52040&apos;, &apos;F&apos;, &apos;allison.williams82@example.com&apos;, &apos;beautifulfish354&apos;, &apos;sanfran&apos;, &apos;(328)-592-3520&apos;, &apos;(550)-172-4018&apos;, &apos;164-78-8160&apos;, &apos;1983-04-09 08:00:42&apos;, &apos;2000-01-01 07:18:54&apos;, &apos;http://api.randomuser.me/portraits/women/16.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/women/16.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/women/16.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;), </span><br><span class="line">(10, &apos;mrs&apos;, &apos;erika&apos;, &apos;king&apos;, &apos;1171 depaul dr&apos;, &apos;addison&apos;, &apos;wisconsin&apos;, &apos;50082&apos;, &apos;F&apos;, &apos;erika.king55@example.com&apos;, &apos;goldenbutterfly498&apos;, &apos;chill&apos;, &apos;(635)-117-5424&apos;, &apos;(662)-110-8448&apos;, &apos;122-71-7145&apos;, &apos;2003-09-19 07:26:17&apos;, &apos;2002-12-31 00:08:43&apos;, &apos;http://api.randomuser.me/portraits/women/52.jpg&apos;, &apos;http://api.randomuser.me/portraits/med/women/52.jpg&apos;, &apos;http://api.randomuser.me/portraits/thumb/women/52.jpg&apos;, &apos;0.6&apos;, &apos;US&apos;);</span><br></pre></td></tr></table></figure></p>
+<p><strong>开始CDC流程</strong></p>
+<p>首先在<code>NiFi</code>所在节点，安装MySQL JDBC驱动。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install mysql-connector-java -y</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>流程概述</li>
+</ul>
+<p>以下是CDC流程的简要概述：</p>
+<ol>
+<li>CaptureChangeMySQL读取bin日志以生成FlowFiles（JSON）</li>
+<li>FlowFiles根据事件类型进行路由：
+<ul>
+<li>开始/提交事件：由JoltTransformJSON操纵的JSON</li>
+<li>DDL事件：添加架构（QUERY）和语句类型（SQL）属性</li>
+<li>删除/插入/更新事件：添加表名，模式（USERS）和语句类型属性，操纵JSON</li>
+</ul>
+</li>
+<li>EnforceOrder确保所有更改事件按正确顺序处理</li>
+<li>PutDatabaseRecord使用RecordReader从输入流文件输入多条记录。这些记录被转换为SQL语句并作为一个批处理执行。</li>
+</ol>
+<ul>
+<li>
+<p>流程步骤</p>
+<ul>
+<li>
+<p>上传模板</p>
+<p>Download <a href="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/mysqlcdc-to-file.xml" target="_blank" rel="noopener">mysqlcdc-to-file.xml</a></p>
+</li>
+<li>
+<p>使用和修改模板</p>
+<blockquote>
+<p>修改MySQL驱动的路径 path : /usr/share/java/mysql-connector-java.jar</p>
+</blockquote>
+<blockquote>
+<p>修改MySQL配置用户名和密码信息。</p>
+</blockquote>
+</li>
+<li>
+<p>启动整个workflow。</p>
+<p>整个MySQL-To-File的workflow，实现实时捕获最新MySQL数据变化，并且输出到一个文件或者clickhouse。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/mysqlcdc-to-file.png" alt=""></p>
+<p>启动MySQL-To-File整个workflow输出结果如下：</p>
+<p>输出13个文件，每个文件代表一个语句：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;type&quot;:&quot;ddl&quot;,&quot;timestamp&quot;:1525452754000,&quot;binlog_filename&quot;:&quot;delta.000001&quot;,&quot;binlog_position&quot;:220,&quot;database&quot;:&quot;source&quot;,&quot;table_name&quot;:null,&quot;table_id&quot;:null,&quot;query&quot;:&quot;create table `users` ( \n`id` mediumint(9) not null auto_increment primary key, \n`title` text, \n`first` text, \n`last` text, \n`street` text, \n`city` text, \n`state` text, \n`zip` text, \n`gender` text, \n`email` text, \n`username` text, \n`password` text, \n`phone` text, \n`cell` text, \n`ssn` text, \n`date_of_birth` timestamp null default null, \n`reg_date` timestamp null default null, \n`large` text, \n`medium` text, \n`thumbnail` text, \n`version` text, \n`nationality` text) \nengine=innodb auto_increment=1 default charset=latin1&quot;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&quot;query&quot;:&quot;begin&quot;&#125;</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:1,&quot;title&quot;:&quot;miss&quot;,&quot;first&quot;:&quot;marlene&quot;,&quot;last&quot;:&quot;shaw&quot;,&quot;street&quot;:&quot;3450 w belt line rd&quot;,&quot;city&quot;:&quot;abilene&quot;,&quot;state&quot;:&quot;florida&quot;,&quot;zip&quot;:&quot;31995&quot;,&quot;gender&quot;:&quot;F&quot;,&quot;email&quot;:&quot;marlene.shaw75@example.com&quot;,&quot;username&quot;:&quot;goldenpanda70&quot;,&quot;password&quot;:&quot;naughty&quot;,&quot;phone&quot;:&quot;(176)-908-6931&quot;,&quot;cell&quot;:&quot;(711)-565-2194&quot;,&quot;ssn&quot;:&quot;800-71-1872&quot;,&quot;date_of_birth&quot;:&quot;1991-10-07 00:22:53.0&quot;,&quot;reg_date&quot;:&quot;2004-01-29 16:19:10.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/women/67.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/women/67.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/women/67.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:2,&quot;title&quot;:&quot;ms&quot;,&quot;first&quot;:&quot;letitia&quot;,&quot;last&quot;:&quot;jordan&quot;,&quot;street&quot;:&quot;2974 mockingbird hill&quot;,&quot;city&quot;:&quot;irvine&quot;,&quot;state&quot;:&quot;new jersey&quot;,&quot;zip&quot;:&quot;64361&quot;,&quot;gender&quot;:&quot;F&quot;,&quot;email&quot;:&quot;letitia.jordan64@example.com&quot;,&quot;username&quot;:&quot;lazytiger614&quot;,&quot;password&quot;:&quot;aaaaa1&quot;,&quot;phone&quot;:&quot;(860)-602-3314&quot;,&quot;cell&quot;:&quot;(724)-685-3472&quot;,&quot;ssn&quot;:&quot;548-93-7031&quot;,&quot;date_of_birth&quot;:&quot;1977-11-14 11:58:01.0&quot;,&quot;reg_date&quot;:&quot;2002-02-09 17:04:59.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/women/19.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/women/19.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/women/19.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:3,&quot;title&quot;:&quot;mr&quot;,&quot;first&quot;:&quot;todd&quot;,&quot;last&quot;:&quot;graham&quot;,&quot;street&quot;:&quot;5760 spring hill rd&quot;,&quot;city&quot;:&quot;garden grove&quot;,&quot;state&quot;:&quot;north carolina&quot;,&quot;zip&quot;:&quot;81790&quot;,&quot;gender&quot;:&quot;M&quot;,&quot;email&quot;:&quot;todd.graham39@example.com&quot;,&quot;username&quot;:&quot;purplekoala484&quot;,&quot;password&quot;:&quot;paintball&quot;,&quot;phone&quot;:&quot;(230)-874-6532&quot;,&quot;cell&quot;:&quot;(186)-529-4912&quot;,&quot;ssn&quot;:&quot;362-31-5248&quot;,&quot;date_of_birth&quot;:&quot;2006-07-25 05:48:01.0&quot;,&quot;reg_date&quot;:&quot;2004-12-05 11:26:34.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/men/39.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/men/39.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/men/39.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:4,&quot;title&quot;:&quot;mr&quot;,&quot;first&quot;:&quot;seth&quot;,&quot;last&quot;:&quot;martinez&quot;,&quot;street&quot;:&quot;4377 fincher rd&quot;,&quot;city&quot;:&quot;chandler&quot;,&quot;state&quot;:&quot;south carolina&quot;,&quot;zip&quot;:&quot;73651&quot;,&quot;gender&quot;:&quot;M&quot;,&quot;email&quot;:&quot;seth.martinez82@example.com&quot;,&quot;username&quot;:&quot;bigbutterfly149&quot;,&quot;password&quot;:&quot;navy&quot;,&quot;phone&quot;:&quot;(122)-782-5822&quot;,&quot;cell&quot;:&quot;(720)-778-8541&quot;,&quot;ssn&quot;:&quot;200-80-9087&quot;,&quot;date_of_birth&quot;:&quot;1981-02-28 08:22:49.0&quot;,&quot;reg_date&quot;:&quot;2009-08-31 12:42:57.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/men/96.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/men/96.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/men/96.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:5,&quot;title&quot;:&quot;mr&quot;,&quot;first&quot;:&quot;guy&quot;,&quot;last&quot;:&quot;mckinney&quot;,&quot;street&quot;:&quot;4524 hogan st&quot;,&quot;city&quot;:&quot;iowa park&quot;,&quot;state&quot;:&quot;ohio&quot;,&quot;zip&quot;:&quot;24140&quot;,&quot;gender&quot;:&quot;M&quot;,&quot;email&quot;:&quot;guy.mckinney53@example.com&quot;,&quot;username&quot;:&quot;blueduck623&quot;,&quot;password&quot;:&quot;office&quot;,&quot;phone&quot;:&quot;(309)-556-7859&quot;,&quot;cell&quot;:&quot;(856)-764-9146&quot;,&quot;ssn&quot;:&quot;973-37-9077&quot;,&quot;date_of_birth&quot;:&quot;1983-11-03 22:02:12.0&quot;,&quot;reg_date&quot;:&quot;2003-10-20 07:23:06.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/men/24.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/men/24.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/men/24.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:6,&quot;title&quot;:&quot;ms&quot;,&quot;first&quot;:&quot;anna&quot;,&quot;last&quot;:&quot;smith&quot;,&quot;street&quot;:&quot;5047 cackson st&quot;,&quot;city&quot;:&quot;rancho cucamonga&quot;,&quot;state&quot;:&quot;pennsylvania&quot;,&quot;zip&quot;:&quot;56486&quot;,&quot;gender&quot;:&quot;F&quot;,&quot;email&quot;:&quot;anna.smith74@example.com&quot;,&quot;username&quot;:&quot;goldenfish121&quot;,&quot;password&quot;:&quot;albion&quot;,&quot;phone&quot;:&quot;(335)-388-7351&quot;,&quot;cell&quot;:&quot;(485)-150-6348&quot;,&quot;ssn&quot;:&quot;680-20-6440&quot;,&quot;date_of_birth&quot;:&quot;1977-09-05 16:08:05.0&quot;,&quot;reg_date&quot;:&quot;2008-07-11 11:09:12.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/women/89.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/women/89.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/women/89.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:7,&quot;title&quot;:&quot;mr&quot;,&quot;first&quot;:&quot;johnny&quot;,&quot;last&quot;:&quot;johnson&quot;,&quot;street&quot;:&quot;7250 bruce st&quot;,&quot;city&quot;:&quot;gresham&quot;,&quot;state&quot;:&quot;new mexico&quot;,&quot;zip&quot;:&quot;83973&quot;,&quot;gender&quot;:&quot;M&quot;,&quot;email&quot;:&quot;johnny.johnson73@example.com&quot;,&quot;username&quot;:&quot;crazyduck127&quot;,&quot;password&quot;:&quot;toast&quot;,&quot;phone&quot;:&quot;(142)-971-3099&quot;,&quot;cell&quot;:&quot;(991)-131-1582&quot;,&quot;ssn&quot;:&quot;683-26-4133&quot;,&quot;date_of_birth&quot;:&quot;1988-08-12 14:04:27.0&quot;,&quot;reg_date&quot;:&quot;2001-04-30 15:32:34.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/men/78.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/men/78.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/men/78.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:8,&quot;title&quot;:&quot;mrs&quot;,&quot;first&quot;:&quot;robin&quot;,&quot;last&quot;:&quot;white&quot;,&quot;street&quot;:&quot;7882 northaven rd&quot;,&quot;city&quot;:&quot;orlando&quot;,&quot;state&quot;:&quot;connecticut&quot;,&quot;zip&quot;:&quot;40452&quot;,&quot;gender&quot;:&quot;F&quot;,&quot;email&quot;:&quot;robin.white46@example.com&quot;,&quot;username&quot;:&quot;whitetiger371&quot;,&quot;password&quot;:&quot;elizabeth&quot;,&quot;phone&quot;:&quot;(311)-659-3812&quot;,&quot;cell&quot;:&quot;(689)-468-6420&quot;,&quot;ssn&quot;:&quot;960-70-3399&quot;,&quot;date_of_birth&quot;:&quot;2003-07-05 13:09:41.0&quot;,&quot;reg_date&quot;:&quot;2014-10-01 02:54:46.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/women/82.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/women/82.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/women/82.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:9,&quot;title&quot;:&quot;miss&quot;,&quot;first&quot;:&quot;allison&quot;,&quot;last&quot;:&quot;williams&quot;,&quot;street&quot;:&quot;7648 edwards rd&quot;,&quot;city&quot;:&quot;edison&quot;,&quot;state&quot;:&quot;louisiana&quot;,&quot;zip&quot;:&quot;52040&quot;,&quot;gender&quot;:&quot;F&quot;,&quot;email&quot;:&quot;allison.williams82@example.com&quot;,&quot;username&quot;:&quot;beautifulfish354&quot;,&quot;password&quot;:&quot;sanfran&quot;,&quot;phone&quot;:&quot;(328)-592-3520&quot;,&quot;cell&quot;:&quot;(550)-172-4018&quot;,&quot;ssn&quot;:&quot;164-78-8160&quot;,&quot;date_of_birth&quot;:&quot;1983-04-09 08:00:42.0&quot;,&quot;reg_date&quot;:&quot;2000-01-01 07:18:54.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/women/16.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/women/16.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/women/16.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&quot;id&quot;:10,&quot;title&quot;:&quot;mrs&quot;,&quot;first&quot;:&quot;erika&quot;,&quot;last&quot;:&quot;king&quot;,&quot;street&quot;:&quot;1171 depaul dr&quot;,&quot;city&quot;:&quot;addison&quot;,&quot;state&quot;:&quot;wisconsin&quot;,&quot;zip&quot;:&quot;50082&quot;,&quot;gender&quot;:&quot;F&quot;,&quot;email&quot;:&quot;erika.king55@example.com&quot;,&quot;username&quot;:&quot;goldenbutterfly498&quot;,&quot;password&quot;:&quot;chill&quot;,&quot;phone&quot;:&quot;(635)-117-5424&quot;,&quot;cell&quot;:&quot;(662)-110-8448&quot;,&quot;ssn&quot;:&quot;122-71-7145&quot;,&quot;date_of_birth&quot;:&quot;2003-09-19 07:26:17.0&quot;,&quot;reg_date&quot;:&quot;2002-12-31 00:08:43.0&quot;,&quot;large&quot;:&quot;http://api.randomuser.me/portraits/women/52.jpg&quot;,&quot;medium&quot;:&quot;http://api.randomuser.me/portraits/med/women/52.jpg&quot;,&quot;thumbnail&quot;:&quot;http://api.randomuser.me/portraits/thumb/women/52.jpg&quot;,&quot;version&quot;:&quot;0.6&quot;,&quot;nationality&quot;:&quot;US&quot;&#125;]</span><br><span class="line"></span><br><span class="line">&#123;&quot;query&quot;:&quot;commit&quot;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实时解析MySQL Binlog的输出结果，在整个流程中涉及捕获最新数据变化，根据不同的DML、DDL语句分类放入不同的Process Flow，插入数据转换Json Flow Data。在最后一个Process中合并数据，按照MySQL插入数据顺序，输出结果到一个分布式DB或者文件中。</p>
+<h2 id="flow-data-in-kafka-to-hdfs"><a class="markdown-anchor" href="#flow-data-in-kafka-to-hdfs">#</a> Flow Data In Kafka To HDFS</h2>
+<p>Download <a href="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/file-to-kakfa-to-hdfs.xml" target="_blank" rel="noopener">file-to-kakfa-to-hdfs.xml</a></p>
+<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/47387-kafka-consume-layout.png" alt=""></p>
+<h2 id="other"><a class="markdown-anchor" href="#other">#</a> Other</h2>
+<p>你可以发挥自己的创造和想象力，通过拖拽式的方式完成企业流数据分析应用。它还可以支持更多数据源和数据分析场景。<a href="https://tech.jikelab.com/labs-docs/zh-cn/docs/intro/quickstart.html" target="_blank" rel="noopener">快速开启企业级Core Data &amp; Core AI 流分析平台JDP</a>。</p>
+
+  </article>
+  
+  <aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    
+    <ul><li><a href="//zh-cn/docs/intro/" alt="指南" class="">指南</a></li><li><a href="//zh-cn/page/process.html" alt="Core Data" class="">Core Data</a></li><li><a href="//zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="//zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li><li><a href="//zh-cn/htap/index.html" alt="HTAP" class="">HTAP</a></li></ul>
+  </div>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="//zh-cn/docs/intro/index.html" class="">JDP 是什么</a></li><li><a href="//zh-cn/docs/intro/quickstart.html" class="">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="//zh-cn/docs/basics/function.html" class="">功能概览</a></li><li><a href="//zh-cn/docs/basics/collection.html" class="">数据融合</a></li><li><a href="//zh-cn/docs/basics/analysis.html" class="">数据分析</a></li><li><a href="//zh-cn/docs/basics/visualization.html" class="">数据展现</a></li><li><a href="//zh-cn/docs/basics/application.html" class="cur">数据应用</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="//zh-cn/docs/core/dataflow.html" class="">数据流</a></li><li><a href="//zh-cn/docs/core/dbms.html" class="">数据存储</a></li><li><a href="//zh-cn/docs/core/datalab.html" class="">数据探索</a></li><li><a href="//zh-cn/docs/core/development.html" class="">本地开发</a></li><li><a href="//zh-cn/docs/core/planning.html" class="">规划部署</a></li><li><a href="//zh-cn/docs/core/runtime.html" class="">运维管理</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="//zh-cn/docs/advanced/architecture.html" class="">架构概览</a></li><li><a href="//zh-cn/docs/advanced/build.html" class="">系统构建</a></li><li><a href="//zh-cn/docs/advanced/roadmap.html" class="">路线图</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="//zh-cn/docs/community/contributing.html" class="">如何贡献</a></li><li><a href="//zh-cn/docs/community/memberguide.html" class="">成员指南</a></li><li><a href="//zh-cn/docs/community/resource.html" class="">资源</a></li></ul></dd><dt>常见问题</dt><dd><ul><li><a href="//zh-cn/docs/faq/deploy.html" class="">部署问题</a></li><li><a href="//zh-cn/docs/faq/debug.html" class="">集群调试</a></li></ul></dd></dl>
+</aside>
+<script src="/js/mobile-aside.js"></script>
+
+</div>
+
+  </div>
+</body>
+<!-- <script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
+<script> 
+docsearch({
+  apiKey: '1561de31a86f79507ea00cdb54ce647c',
+  indexName: 'eggjs',
+  inputSelector: '#search-query',
+  // debug: true // Set debug to true if you want to inspect the dropdown
+});
+</script> -->
+</html>
