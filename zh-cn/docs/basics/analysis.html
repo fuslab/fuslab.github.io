@@ -86,15 +86,15 @@
 <ul>
 <li>A方案</li>
 </ul>
-<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/clickhouse-no-redundancy.png" alt="clickhouse_no_redundancy"></p>
+<p><img src="https://fusionlab.cn/zh-cn/docs/basics/img/clickhouse-no-redundancy.png" alt="clickhouse_no_redundancy"></p>
 <ul>
 <li>B方案</li>
 </ul>
-<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/clickhouse-high-reliability.png" alt="clickhouse_high_reliability"></p>
+<p><img src="https://fusionlab.cn/zh-cn/docs/basics/img/clickhouse-high-reliability.png" alt="clickhouse_high_reliability"></p>
 <ul>
 <li>C方案</li>
 </ul>
-<p><img src="https://tech.jikelab.com/labs-docs/zh-cn/docs/basics/img/clickhouse-replication-3.png" alt="clickhouse_replication_3"></p>
+<p><img src="https://fusionlab.cn/zh-cn/docs/basics/img/clickhouse-replication-3.png" alt="clickhouse_replication_3"></p>
 <p>目前JDP 3.0默认<code>A方案</code>，在云端部署，云存储提供存储可靠性，选择A方案。私有化部署建议<code>B</code>方案。<code>C方案</code>提供数据3副本，大大提高数据的安全性，需要选择适合的表引擎来保障数据可靠性。</p>
 <p>JDP在未来的版本中提供B、C方案，在界面进行选择，目前仅仅支持A方案。</p>
 <p><code>A</code>方案最小集群一个node，经过测试1个Node依然可以正常使用。只要随着不断的加节点，达到横向扩展计算和存储能力，由于是新分片，不会对现有数据和业务产生影响。</p>
