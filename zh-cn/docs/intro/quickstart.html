@@ -165,13 +165,13 @@
 <p>目前仅支持R系列操作系统7.x版本，比如：centos/redhat 7.2,7.3,7.4。</p>
 <p>注意：<code>请不要尝试在其他系统安装，目前我们还未提供支持，安装失败属于正常现象。</code></p>
 </blockquote>
-<p>注意：<code>内容基于7.2.1511 (Core)版本安装并编写而成</code>。</p>
+<p>注意：<code>内容基于7.4.1708 (Core)版本安装并编写而成</code>。</p>
 <p>[2] Ambari-server所在的服务器能够ssh免密码登录到全部主机。</p>
 <p>[3] 全部主机关闭selinux</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">setenforce 0  &amp;&amp; sed –i &apos;s#SELINUX=enforcing#SELINUX=disabled#g&apos; /etc/selinux/config</span><br></pre></td></tr></table></figure></p>
 <p>[4] 所有节点主机名统一格式</p>
 <p>例如：</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- ClickHouse Server: node&#123;001..100&#125;.jikelab.com</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- ClickHouse Server: node&#123;001..100&#125;.fulsionlab.cn</span><br></pre></td></tr></table></figure></p>
 <p>[5] 全部主机名和IP地址进行映射hosts</p>
 <p>[6] 全部机器关闭防火墙</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">systemctl stop firewalld.service &amp;&amp; systemctl disable firewalld.service</span><br></pre></td></tr></table></figure></p>
@@ -194,8 +194,8 @@
 <p>如果你按照之前的<code>必备条件</code>准备，并且选择集群任意节点做为httpd服务器，那么直接启动即可。</p>
 <p>如果你选择的一台全新服务器安装httpd，没有使用集群节点，那么你需要关闭selinux和firewalld。</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">systemctl start httpd</span><br><span class="line"></span><br><span class="line">systemctl enable httpd</span><br></pre></td></tr></table></figure></p>
-<p>[3] 下载JDP-3.0.0.0安装包</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://archive.jikelab.com/jdp/repo-as-tarball/3.0.0.0/JDP-3.0.0.0-centos7-rpm.tar.gz</span><br></pre></td></tr></table></figure></p>
+<p>[3] 下载JDP-3.1.0.0安装包</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://archive.fusionlab.cn/jdp/repo-as-tarball/3.1.0.0/JDP-3.1.0.0-centos7-rpm.tar.gz</span><br></pre></td></tr></table></figure></p>
 <blockquote>
 <p>软件包比较大，大约需要下载5min</p>
 <p>3% [=&gt;                                        ] 93,634,920  7.11MB/s  eta 5m 33s</p>
@@ -203,54 +203,51 @@
 <p><code>由于JDP下载量太大，导致国外的IP BLACKED，目前已无法稳定使用。</code></p>
 <p>所以，提供百度云盘，下载地址：</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">链接:https://pan.baidu.com/s/1Xgh-PbPURgSYG2XUJOU6HA  </span><br><span class="line"></span><br><span class="line">密码:frsj</span><br></pre></td></tr></table></figure></p>
-<p>[4] 解压JDP-3.0.0.0到<code>/var/www/html</code>路径</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -zxvf JDP-3.0.0.0-centos7-rpm.tar.gz -C /var/www/html</span><br></pre></td></tr></table></figure></p>
+<p>[4] 解压JDP-3.1.0.0到<code>/var/www/html</code>路径</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -zxvf JDP-3.1.0.0-centos7-rpm.tar.gz -C /var/www/html/jdp/</span><br></pre></td></tr></table></figure></p>
 <p>[5] 验证JDP源可用性</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@node1 html]# tree -L 5 centos/</span><br><span class="line">centos/</span><br><span class="line">└── 7</span><br><span class="line">    └── x86_64</span><br><span class="line">        └── jdp</span><br><span class="line">            └── 3.0.0.0</span><br><span class="line">                ├── ambari</span><br><span class="line">                ├── component</span><br><span class="line">                └── mpack</span><br><span class="line"></span><br><span class="line">7 directories, 0 files</span><br></pre></td></tr></table></figure></p>
-<p>通过http://you_httpd_ip/centos访问，如图，说明源路径没问题。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[f1@host html]$ pwd</span><br><span class="line">/data/nginx/html</span><br><span class="line"></span><br><span class="line">[f1@host html]$ tree -L 2 jdp/centos7/</span><br><span class="line">jdp/centos7/</span><br><span class="line">├── 3.x</span><br><span class="line">│   ├── 3.1.0.0</span><br><span class="line">│   ├── ambari</span><br><span class="line">│   ├── ambari.repo</span><br><span class="line">│   └── jdp-3.1.repo</span><br><span class="line">└── utils</span><br><span class="line">    └── 1.1.0</span><br></pre></td></tr></table></figure></p>
+<p>通过http://you_httpd_ip/jdp/centos7/3.x/访问，如图，说明源路径没问题。</p>
 <p><img src="http://www.fusionlab.cn/zh-cn/docs/intro/img/jdp-local-repo.png" alt=""></p>
 <p>通过<code>yum search</code>验证源是否可用。</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://you_httpd_ip/centos/7/x86_64/jdp/3.0.0.0/ambari/ambari.repo -O /etc/yum.repos.d/</span><br></pre></td></tr></table></figure></p>
-<p>修改ambari.repo中的<code>baseurl=http://you_httpd_ip/centos/7/x86_64/jdp/3.0.0.0/ambari</code></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://you_httpd_ip/jdp/centos7/3.x/ambari.repo -O /etc/yum.repos.d/</span><br></pre></td></tr></table></figure></p>
+<p>修改ambari.repo中的<code>baseurl=http://you_httpd_ip/jdp/centos7/3.x/ambari/</code></p>
 <p>然后执行如下命令：</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum search ambari</span><br></pre></td></tr></table></figure></p>
 <p>如果有相关ambari软件信息，那么恭喜你，JDP离线源成功了。</p>
 <h3 id="ambari安装"><a class="markdown-anchor" href="#ambari安装">#</a> Ambari安装</h3>
 <p>[1] ambari-server节点生成相关的repo文件，命令如下：</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl http://www.jikelab.com/jdp/centos/7/x86_64/jdp/3.0.0.0/ambari/ambari.repo &gt; /etc/yum.repos.d/ambari.repo</span><br></pre></td></tr></table></figure></p>
-<p>修改ambari.repo中的<code>baseurl=http://you_httpd_ip/centos/7/x86_64/jdp/3.0.0.0/ambari</code></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl http://archive.fusionlab.cn/jdp/centos7/3.x/ambari.repo &gt; /etc/yum.repos.d/ambari.repo</span><br></pre></td></tr></table></figure></p>
+<p>修改ambari.repo中的<code>baseurl=http://you_httpd_ip/jdp/centos7/3.x/ambari/</code></p>
 <p>[2] 安装ambari-server</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install ambari-server -y</span><br></pre></td></tr></table></figure></p>
 <p>[3] 配置Ambari-Server的JDK，JDP平台所需JDK<code>必须 &gt;= 1.8</code></p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://archive.jikelab.com/jdp/artifacts/jdk-8u112-linux-x64.tar.gz -O /var/lib/ambari-server/resources/jdk-8u112-linux-x64.tar.gz</span><br><span class="line">wget http://archive.jikelab.com/jdp/artifacts/jce_policy-8.zip /var/lib/ambari-server/resources/jce_policy-8.zip</span><br></pre></td></tr></table></figure></p>
-<p>由于JDP下载量太大，导致国外的IP BLACKED，目前已无法稳定使用。</p>
-<p>所以，提供百度云盘，下载地址，此处JDK需要验证策略文件，百度云Download请参考如上操作：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://archive.fusionlab.cn/jdp/artifacts/jdk-8u112-linux-x64.tar.gz -O /var/lib/ambari-server/resources/jdk-8u112-linux-x64.tar.gz</span><br><span class="line">wget http://archive.fusionlab.cn/jdp/artifacts/jce_policy-8.zip /var/lib/ambari-server/resources/jce_policy-8.zip</span><br></pre></td></tr></table></figure></p>
+<p><code>由于JDP下载量太大，导致国外的IP BLACKED，目前已无法稳定使用。</code></p>
+<p>所以，提供<code>百度云盘</code>，下载地址，注意此处JDK需要验证策略文件，百度云Download请参考如上操作：</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">链接:https://pan.baidu.com/s/1Xgh-PbPURgSYG2XUJOU6HA  </span><br><span class="line"></span><br><span class="line">密码:frsj</span><br></pre></td></tr></table></figure></p>
 <p>[4] ambari-server setup</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@ambari-server resources]# ambari-server setup</span><br><span class="line">Using python  /usr/bin/python</span><br><span class="line">Setup ambari-server</span><br><span class="line">Checking SELinux...</span><br><span class="line">SELinux status is &apos;enabled&apos;</span><br><span class="line">SELinux mode is &apos;permissive&apos;</span><br><span class="line">WARNING: SELinux is set to &apos;permissive&apos; mode and temporarily disabled.</span><br><span class="line">OK to continue [y/n] (y)? </span><br><span class="line">Customize user account for ambari-server daemon [y/n] (n)? </span><br><span class="line">Adjusting ambari-server permissions and ownership...</span><br><span class="line">Checking firewall status...</span><br><span class="line">Checking JDK...</span><br><span class="line">[1] Oracle JDK 1.8 + Java Cryptography Extension (JCE) Policy Files 8</span><br><span class="line">[2] Oracle JDK 1.7 + Java Cryptography Extension (JCE) Policy Files 7</span><br><span class="line">[3] Custom JDK</span><br><span class="line">==============================================================================</span><br><span class="line">Enter choice (1): 1</span><br><span class="line">JDK already exists, using /var/lib/ambari-server/resources/jdk-8u112-linux-x64.tar.gz</span><br><span class="line">Installing JDK to /usr/jdk64/</span><br><span class="line">Successfully installed JDK to /usr/jdk64/</span><br><span class="line">JCE Policy archive already exists, using /var/lib/ambari-server/resources/jce_policy-8.zip</span><br><span class="line">Installing JCE policy...</span><br><span class="line">Completing setup...</span><br><span class="line">Configuring database...</span><br><span class="line">Enter advanced database configuration [y/n] (n)? </span><br><span class="line">Configuring database...</span><br><span class="line">Default properties detected. Using built-in database.</span><br><span class="line">Configuring ambari database...</span><br><span class="line">Checking PostgreSQL...</span><br><span class="line">Running initdb: This may take up to a minute.</span><br><span class="line">Initializing database ... OK</span><br><span class="line"></span><br><span class="line">About to start PostgreSQL</span><br><span class="line">Configuring local database...</span><br><span class="line">Configuring PostgreSQL...</span><br><span class="line">Restarting PostgreSQL</span><br><span class="line">Creating schema and user...</span><br><span class="line">done.</span><br><span class="line">Creating tables...</span><br><span class="line">done.</span><br><span class="line">Extracting system views...</span><br><span class="line">ambari-admin-2.5.1.0.159.jar</span><br><span class="line">...........</span><br><span class="line">Adjusting ambari-server permissions and ownership...</span><br><span class="line">Ambari Server &apos;setup&apos; completed successfully.</span><br></pre></td></tr></table></figure></p>
-<p>[4] 添加JDP mpack到ambari-server</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo ambari-server install-mpack --mpack=http://archive.jikelab.com/jdp/centos/7/x86_64/jdp/3.0.0.0/mpack/jdp-ambari-mpack-0.1.0.0.3.0.0-108.tar.gz --purge --verbose --force</span><br></pre></td></tr></table></figure></p>
-<p>等待检测，出现用户输入选项，默认是<code>no</code>，输入<code>yes</code>，等待<code>JDP stack</code>成功添加。</p>
-<p>[5] 启动ambari-server</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@ambari-server resources]# ambari-server start</span><br><span class="line">Using python  /usr/bin/python</span><br><span class="line">Starting ambari-server</span><br><span class="line">Ambari Server running with administrator privileges.</span><br><span class="line">Organizing resource files at /var/lib/ambari-server/resources...</span><br><span class="line">Ambari database consistency check started...</span><br><span class="line">Server PID at: /var/run/ambari-server/ambari-server.pid</span><br><span class="line">Server out at: /var/log/ambari-server/ambari-server.out</span><br><span class="line">Server log at: /var/log/ambari-server/ambari-server.log</span><br><span class="line">Waiting for server start...........</span><br><span class="line">Server started listening on 8080</span><br><span class="line"></span><br><span class="line">DB configs consistency check: no errors and warnings were found.</span><br><span class="line">Ambari Server &apos;start&apos; completed successfully.</span><br></pre></td></tr></table></figure></p>
-<p>启动成功，开始安装JDP集群。</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@node1 ~]# ambari-server setup</span><br><span class="line">Using python  /usr/bin/python</span><br><span class="line">Setup ambari-server</span><br><span class="line">Checking SELinux...</span><br><span class="line">SELinux status is &apos;enabled&apos;</span><br><span class="line">SELinux mode is &apos;permissive&apos;</span><br><span class="line">WARNING: SELinux is set to &apos;permissive&apos; mode and temporarily disabled.</span><br><span class="line">OK to continue [y/n] (y)?</span><br><span class="line">Customize user account for ambari-server daemon [y/n] (n)?</span><br><span class="line">Adjusting ambari-server permissions and ownership...</span><br><span class="line">Checking firewall status...</span><br><span class="line">Checking JDK...</span><br><span class="line">[1] Oracle JDK 1.8 + Java Cryptography Extension (JCE) Policy Files 8</span><br><span class="line">[2] Custom JDK</span><br><span class="line">==============================================================================</span><br><span class="line">Enter choice (1): 1</span><br><span class="line">To download the Oracle JDK and the Java Cryptography Extension (JCE) Policy Files you must accept the license terms found at http://www.oracle.com/technetwork/java/javase/terms/license/index.html and not accepting will cancel the Ambari Server setup and you must install the JDK and JCE files manually.</span><br><span class="line">Do you accept the Oracle Binary Code License Agreement [y/n] (y)? y</span><br><span class="line">Downloading JDK from http://archive.fusionlab.cn/jdp/artifacts/jdk-8u112-linux-x64.tar.gz to /var/lib/ambari-server/resources/jdk-8u112-linux-x64.tar.gz</span><br><span class="line">jdk-8u112-linux-x64.tar.gz... 100% (174.7 MB of 174.7 MB)</span><br><span class="line">Successfully downloaded JDK distribution to /var/lib/ambari-server/resources/jdk-8u112-linux-x64.tar.gz</span><br><span class="line">Installing JDK to /usr/jdk64/</span><br><span class="line">Successfully installed JDK to /usr/jdk64/</span><br><span class="line">Downloading JCE Policy archive from http://archive.fusionlab.cn/jdp/artifacts/jce_policy-8.zip to /var/lib/ambari-server/resources/jce_policy-8.zip</span><br><span class="line"></span><br><span class="line">Successfully downloaded JCE Policy archive to /var/lib/ambari-server/resources/jce_policy-8.zip</span><br><span class="line">Installing JCE policy...</span><br><span class="line">Check JDK version for Ambari Server...</span><br><span class="line">JDK version found: 8</span><br><span class="line">Minimum JDK version is 8 for Ambari. Skipping to setup different JDK for Ambari Server.</span><br><span class="line">Checking GPL software agreement...</span><br><span class="line">GPL License for LZO: https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html</span><br><span class="line">Enable Ambari Server to download and install GPL Licensed LZO packages [y/n] (n)?</span><br><span class="line">Completing setup...</span><br><span class="line">Configuring database...</span><br><span class="line">Enter advanced database configuration [y/n] (n)?</span><br><span class="line">Configuring database...</span><br><span class="line">Default properties detected. Using built-in database.</span><br><span class="line">Configuring ambari database...</span><br><span class="line">Checking PostgreSQL...</span><br><span class="line">Running initdb: This may take up to a minute.</span><br><span class="line">Initializing database ... OK</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">About to start PostgreSQL</span><br><span class="line">Configuring local database...</span><br><span class="line">Configuring PostgreSQL...</span><br><span class="line">Restarting PostgreSQL</span><br><span class="line">Creating schema and user...</span><br><span class="line">done.</span><br><span class="line">Creating tables...</span><br><span class="line">done.</span><br><span class="line">Extracting system views...</span><br><span class="line">ambari-admin-2.7.0.0.0.jar</span><br><span class="line">Error extracting ambari-views-package-2.5.0.0.0.jar</span><br><span class="line">....</span><br><span class="line">Ambari repo file doesn&apos;t contain latest json url, skipping repoinfos modification</span><br><span class="line">Adjusting ambari-server permissions and ownership...</span><br><span class="line">Ambari Server &apos;setup&apos; completed successfully.</span><br></pre></td></tr></table></figure></p>
+<p>[5] 启动 ambari-server</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@node1 ~]# ambari-server start</span><br><span class="line">Using python  /usr/bin/python</span><br><span class="line">Starting ambari-server</span><br><span class="line">Ambari Server running with administrator privileges.</span><br><span class="line">Organizing resource files at /var/lib/ambari-server/resources...</span><br><span class="line">Ambari database consistency check started...</span><br><span class="line">Server PID at: /var/run/ambari-server/ambari-server.pid</span><br><span class="line">Server out at: /var/log/ambari-server/ambari-server.out</span><br><span class="line">Server log at: /var/log/ambari-server/ambari-server.log</span><br><span class="line">Waiting for server start.........................................................</span><br><span class="line">Server started listening on 8080</span><br><span class="line"></span><br><span class="line">DB configs consistency check: no errors and warnings were found.</span><br><span class="line">Ambari Server &apos;start&apos; completed successfully.</span><br></pre></td></tr></table></figure></p>
+<p>ambari-server 启动成功，开始安装JDP集群。</p>
 <h3 id="jdp集群安装"><a class="markdown-anchor" href="#jdp集群安装">#</a> JDP集群安装</h3>
 <p>浏览器输入http://your_ambari-server_ip:8080/#/login
 用户名：admin
 密    码：admin</p>
 <p>通过登录页面进入集群安装向导，如下所示。</p>
 <p><img src="http://www.fusionlab.cn/zh-cn/docs/intro/img/ambari-launch-install-wizard.png" alt="launch-install-wizard"></p>
-<p>通过鼠标单击”Launch Install Wizard”按钮，通过11个setup引导步骤，进行可视化的集群安装。</p>
+<p>通过鼠标单击”Launch Install Wizard”按钮，通过10个setup引导步骤，进行可视化的集群安装。</p>
 <h4 id="step1-get-started"><a class="markdown-anchor" href="#step1-get-started">#</a> Step1 - Get Started</h4>
 <p>步骤1，需要填入一个集群名称Cluster Name，点击下一步。例如：</p>
 <p><img src="http://www.fusionlab.cn/zh-cn/docs/intro/img/Step1-Get-Started.png" alt="Step1-Get-Started"></p>
 <h4 id="step2-select-version"><a class="markdown-anchor" href="#step2-select-version">#</a> Step2 - Select Version</h4>
-<p>选择使用JDP的版本，默认支持3个JDP版本的安装部署，鼠标点击“Use Local Repository”填入之前制作的本地仓库源地址,点击下一步：</p>
+<p>选择使用JDP的版本，默认支持3.1版本的安装部署，鼠标点击“Use Local Repository”填入之前制作的本地仓库源地址,点击下一步：</p>
 <p><img src="http://www.fusionlab.cn/zh-cn/docs/intro/img/Step2-Select-Version.png" alt="Step2-Select-Version"></p>
-<p>如上图Remove redhat6选项，选择redhat7：</p>
+<p>如上图，默认支持redhat7：</p>
 <ul>
-<li>JDP-3.0 Base URL：<code>http://you_httpd_ip/centos/7/x86_64/jdp/3.0.0.0/component/</code></li>
-<li>JDP-3.0 JDP-UTILS-1.1.0.51：<code>http://you_httpd_ip/centos/7/x86_64/jdp/3.0.0.0/component/</code></li>
+<li>JDP-3.1 Base URL：<code>http://you_httpd_ip/jdp/centos7/3.x/3.1.0.0</code></li>
+<li>JDP-3.1 JDP-UTILS-1.1.0 Base URL：<code>http://you_httpd_ip/jdp/centos7/3.x/3.1.0.0</code></li>
 </ul>
 <h4 id="step3-install-options"><a class="markdown-anchor" href="#step3-install-options">#</a> Step3 - Install Options</h4>
 <p>填写需要安装的目标主机节点的hosts映射名称，私钥信息填写为ambari-server所在节点，可以免密码登录所有节点的用户私钥信息。例如：一般通过root用户进行集群的安装，如下填写root用户<code>/root/.ssh/id_rsa</code>文件内容。</p>
@@ -261,7 +258,7 @@
 <p><img src="http://www.fusionlab.cn/zh-cn/docs/intro/img/Step3-Confirm-Hosts.png" alt="Step3-Confirm-Hosts"></p>
 <p>点击“Next”继续安装。</p>
 <h4 id="step4-choose-services"><a class="markdown-anchor" href="#step4-choose-services">#</a> Step4 - Choose Services</h4>
-<p>选择你需要安装的服务，目前JDP提供8个组件的自动化安装和部署维护。如下图所示：</p>
+<p>选择你需要安装的服务，目前JDP提供7个组件的自动化安装和部署维护。如下图所示：</p>
 <p><img src="http://www.fusionlab.cn/zh-cn/docs/intro/img/Step4-Choose-Services.png" alt="Step4-Choose-Services"></p>
 <p>你需要勾选的服务如上所示，进行JDP集群的安装，点击<code>Next</code>。</p>
 <h4 id="step5-assign-masters"><a class="markdown-anchor" href="#step5-assign-masters">#</a> Step5 - Assign Masters</h4>
@@ -300,28 +297,29 @@
 <li>只读ck用户：ck/admin</li>
 </ul>
 </blockquote>
-<p>[3] NiFi</p>
-<p>Advanced nifi-ambari-config选项卡：</p>
+<p>[3] Superset</p>
 <blockquote>
-<p>Encrypt Configuration Master Key Password，请填写大于12个字节的密码，带有数字和字符</p>
-<p>Sensitive property values encryption password，请填写大于10个字节的
-密码，带有数字和字符</p>
+<p>Superset Secret Password, 请输入带有数字和字符的密码信息</p>
+<p>Superset Admin Password，填写管理员密码</p>
+<p>Superset Database Password，填写数据库密码</p>
 </blockquote>
-<p>Advanced nifi-ambari-ssl-config选型卡：</p>
-<blockquote>
-<p>NiFi CA Token， 输入你的Token信息，如果不填写，会导致CA证书问题，访问NiFi页面出错。</p>
-</blockquote>
-<p>[4] Superset</p>
-<blockquote>
-<p>SECRET_KEY，输入安全key，请输入带有数字和字符的key信息，否则会导致访问superset页面
-出错。</p>
-<p>superset_admin_email，填写管理员邮箱信息
-superset_admin_firstname，填写管理员firstname信息
-superset_admin_lastname，填写管理员lastname信息
-Superset Admin Password，填写管理员密码</p>
 <p>请牢记用户密码信息，在登录superset时需要使用到。</p>
-</blockquote>
-<p>点击<code>Next</code>进入下一步。</p>
+<p>点击，<code>Next</code>进入下一步。</p>
+<ol>
+<li>DATABASES，Superset 数据库可持久化，默认使用：SQLITE，点击<code>Next</code>下一步。</li>
+<li>DIRECTORIES，设置组件DATA DIRS，有默认值，点击<code>Next</code>下一步。
+<ul>
+<li>ZOOKEEPER</li>
+<li>INFRA SOLR</li>
+<li>AMBARI METRICS</li>
+<li>KAFKA</li>
+<li>LOG SEARCH</li>
+</ul>
+</li>
+<li>ACCOUNTS，点击<code>Next</code>下一步。</li>
+<li>ALL CONFIGURATIONS，设置组件CONFIGURATIONS，点击<code>Next</code>下一步。</li>
+</ol>
+<p>注意：<code>ClickHouse CONFIGURATIONS DATA DIR</code>，默认路径：<code>/data/clickhouse</code>，可根据实际情况进行修改。</p>
 <h4 id="step8-review"><a class="markdown-anchor" href="#step8-review">#</a> Step8 - Review</h4>
 <p>在安装之前预览集群服务分配和节点相关信息是否正确，可以通过<code>Print</code>输出集群相关信息，如果检测没有任何问题，你就可以进行下一步<code>Deploy</code>了。</p>
 <p><img src="http://www.fusionlab.cn/zh-cn/docs/intro/img/Step8-Review.png" alt="Step8-Review"></p>
