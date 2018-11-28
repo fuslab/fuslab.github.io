@@ -180,7 +180,7 @@
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ntpdate asia.pool.ntp.org &amp;&amp; hwclock -w</span><br></pre></td></tr></table></figure></p>
 <p>集群组件利用时间戳进行存储的，需要保障集群所有节点时间一致性，不然会导致集群异常，目前在分布式数据库领域，对于分布式集群时间一致性的误差不能超过秒级，在JDP中Zookeeper组件，如果在集群安装之前你没有主动的去让所有节点时间一致，安装完成之后再去同步时间，会导致依赖Zookeeper服务的ClickHouse不能正常工作。</p>
 <p>目前NewSQL数据库系统也是严格要求必须保证同一数据中心时间一致，甚至通过硬件时钟来做时间同步。</p>
-<p>[8] 安装epel-release</p>
+<p>[8] 安装epel-release(可选)</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install epel-release -y</span><br></pre></td></tr></table></figure></p>
 <p>因为JDP流分析平台中的Superset组件，支持异步数据查询，依赖到epel源中的<code>lapack</code>、<code>openblas-devel</code>优化的BLAS库。</p>
 <h3 id="制作本地源"><a class="markdown-anchor" href="#制作本地源">#</a> 制作本地源</h3>
@@ -204,7 +204,7 @@
 <p>所以，提供百度云盘，下载地址：</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">链接:https://pan.baidu.com/s/1Xgh-PbPURgSYG2XUJOU6HA  </span><br><span class="line"></span><br><span class="line">密码:frsj</span><br></pre></td></tr></table></figure></p>
 <p>[4] 解压JDP-3.1.0.0到<code>/var/www/html</code>路径</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tar -zxvf JDP-3.1.0.0-centos7-rpm.tar.gz -C /var/www/html/jdp/</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir /var/www/html/jdp/</span><br><span class="line"></span><br><span class="line">tar -zxvf JDP-3.1.0.0-centos7-rpm.tar.gz -C /var/www/html/jdp/</span><br></pre></td></tr></table></figure></p>
 <p>[5] 验证JDP源可用性</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[f1@host html]$ pwd</span><br><span class="line">/data/nginx/html</span><br><span class="line"></span><br><span class="line">[f1@host html]$ tree -L 2 jdp/centos7/</span><br><span class="line">jdp/centos7/</span><br><span class="line">├── 3.x</span><br><span class="line">│   ├── 3.1.0.0</span><br><span class="line">│   ├── ambari</span><br><span class="line">│   ├── ambari.repo</span><br><span class="line">│   └── jdp-3.1.repo</span><br><span class="line">└── utils</span><br><span class="line">    └── 1.1.0</span><br></pre></td></tr></table></figure></p>
 <p>通过http://you_httpd_ip/jdp/centos7/3.x/访问，如图，说明源路径没问题。</p>
@@ -217,7 +217,7 @@
 <p>如果有相关ambari软件信息，那么恭喜你，JDP离线源成功了。</p>
 <h3 id="ambari安装"><a class="markdown-anchor" href="#ambari安装">#</a> Ambari安装</h3>
 <p>[1] ambari-server节点生成相关的repo文件，命令如下：</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl http://archive.fusionlab.cn/jdp/centos7/3.x/ambari.repo &gt; /etc/yum.repos.d/ambari.repo</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl http://you_httpd_ip/jdp/centos7/3.x/ambari.repo &gt; /etc/yum.repos.d/ambari.repo</span><br></pre></td></tr></table></figure></p>
 <p>修改ambari.repo中的<code>baseurl=http://you_httpd_ip/jdp/centos7/3.x/ambari/</code></p>
 <p>[2] 安装ambari-server</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install ambari-server -y</span><br></pre></td></tr></table></figure></p>
