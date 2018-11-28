@@ -207,10 +207,10 @@
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir /var/www/html/jdp/</span><br><span class="line"></span><br><span class="line">tar -zxvf JDP-3.1.0.0-centos7-rpm.tar.gz -C /var/www/html/jdp/</span><br></pre></td></tr></table></figure></p>
 <p>[5] 验证JDP源可用性</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[f1@host html]$ pwd</span><br><span class="line">/data/nginx/html</span><br><span class="line"></span><br><span class="line">[f1@host html]$ tree -L 2 jdp/centos7/</span><br><span class="line">jdp/centos7/</span><br><span class="line">├── 3.x</span><br><span class="line">│   ├── 3.1.0.0</span><br><span class="line">│   ├── ambari</span><br><span class="line">│   ├── ambari.repo</span><br><span class="line">│   └── jdp-3.1.repo</span><br><span class="line">└── utils</span><br><span class="line">    └── 1.1.0</span><br></pre></td></tr></table></figure></p>
-<p>通过http://you_httpd_ip/jdp/centos7/3.x/访问，如图，说明源路径没问题。</p>
+<p>通过<code>http://you_httpd_ip/jdp/centos7/3.x/</code>访问，如图，说明源路径没问题。</p>
 <p><img src="http://www.fusionlab.cn/zh-cn/docs/intro/img/jdp-local-repo.png" alt=""></p>
 <p>通过<code>yum search</code>验证源是否可用。</p>
-<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://you_httpd_ip/jdp/centos7/3.x/ambari.repo -O /etc/yum.repos.d/</span><br></pre></td></tr></table></figure></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http://you_httpd_ip/jdp/centos7/3.x/ambari.repo -O /etc/yum.repos.d/ambari.repo</span><br></pre></td></tr></table></figure></p>
 <p>修改ambari.repo中的<code>baseurl=http://you_httpd_ip/jdp/centos7/3.x/ambari/</code></p>
 <p>然后执行如下命令：</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum search ambari</span><br></pre></td></tr></table></figure></p>
