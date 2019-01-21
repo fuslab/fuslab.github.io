@@ -1,0 +1,39 @@
+# JDP文档
+docs:
+    Intro:
+      What is JDP: /docs/intro/index.html
+      Get Start: /docs/intro/quickstart.html
+    
+    Basics:
+      Function: /docs/basics/function.html
+      Collection: /docs/basics/collection.html
+      Analysis: /docs/basics/analysis.html
+      Visualization: /docs/basics/visualization.html
+      Application: /docs/basics/application.html
+    
+    Core:
+      DBMS: /docs/core/dbms.html
+      Datalab: /docs/core/datalab.html
+      Development: /docs/core/development.html
+      Planning: /docs/core/planning.html
+      Runtime: /docs/core/runtime.html
+    
+    Advanced:
+      Architecture: /docs/advanced/architecture.html
+      Build: /docs/advanced/build.html
+      Roadmap: /docs/advanced/roadmap.html
+
+    Community:
+      Contributing: /docs/community/contributing.html
+      Member Guide: /docs/community/memberguide.html
+      Resource: /docs/community/resource.html
+
+    FAQ:
+      Deploy: /docs/faq/deploy.html
+      debug: /docs/faq/debug.html
+    
+# fdb
+fdb:
+    Intro:
+      What is FusionDB: /fdb/index.html
+      FusionDB Get Start: /fdb/quickstart.html

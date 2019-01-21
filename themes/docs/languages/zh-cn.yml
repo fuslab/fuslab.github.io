@@ -1,0 +1,62 @@
+menu:
+  guide: 指南
+  api: API
+  tutorials: 教程
+  user: 使用案例
+  process: Core Data
+  ai: Core AI
+  fdb: FusionDB
+  # plugins: 插件
+  # release: 发布日志
+
+index:
+  slogan: "高性能流分析平台"
+  feature11: "进程管理"
+  feature12: "内置的进程管理和负载均衡"
+  feature21: "自定义"
+  feature31: "强大的插件系统"
+  feature32: "插件系统可插拔及可扩展随心所欲"
+  getstart: "开始使用"
+  readmore: "查看更多"
+
+header:
+  translations: "切换语言"
+
+sidebar:
+  docs:
+    Intro: 新手指南
+    What is JDP: JDP 是什么
+    Get Start: 快速入门
+
+    Basics: 基础功能
+    Function: 功能概览
+    Collection: 数据融合
+    Analysis: 数据分析
+    Visualization: 数据展现
+    Application: 数据应用
+
+    Core: 核心功能
+    DBMS: 数据存储
+    Datalab: 数据探索
+    Development: 本地开发
+    Planning: 规划部署
+    Runtime: 运维管理
+
+    Advanced: 进阶
+    Architecture: 架构概览
+    Build: 系统构建 
+    Roadmap: 路线图
+
+    Community: 社区
+    Contributing: 如何贡献
+    Member Guide: 成员指南
+    Resource: 资源
+
+    FAQ: 常见问题
+    Deploy: 部署问题
+    debug: 集群调试
+
+  fdb:
+    Intro: 新手指南
+    What is FusionDB: FusionDB 是什么
+    FusionDB Get Start: 快速启动
