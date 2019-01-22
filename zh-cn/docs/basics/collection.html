@@ -77,7 +77,7 @@
 <p><code>Save Data</code>数据分发引擎，配置数据计算间隔和持久化周期，数据量累计到一定程度，我们会以Batch的方式，每隔一段时间周期性把数据入库到 ClickHouse 集群或其他业务系统，ClickHouse 建议批量导入数据，每次个批次数据集大于10w。</p>
 <p>ClickHouse &amp; FusionDB 是整个 JDP 平台的核心，提供分布式数据库功能。此外我们还提供更多的选择，如：你可以通过<code>Load Data</code>中数据流转视图功能，将数据从一个系统(例如：RDBMS导入到Kafka)，利用<code>Save Data</code>数据存储引擎，将动态计算的结果分发到各个业务系统(例如：Kafka Topic内容到 HDFS File/ClickHouse/RDBMS/etc)</p>
 <p>如下列出大多数已支持的连接器。</p>
-<h2 id="data-collect-processor-transferd"><a class="markdown-anchor" href="#data-collect-processor-transferd">#</a> Data Collect Processor &amp; Transferd</h2>
+<h2 id="load-data-fql-analysis-transferd-data"><a class="markdown-anchor" href="#load-data-fql-analysis-transferd-data">#</a> Load Data &amp; FQL Analysis &amp; Transferd Data</h2>
 <p>通过持续集成系统jdp-package大量的重复测试，<code>Data Collect</code>Processor的功能在JDP平台全部支持，这一切得益于强大的开源社区力量。</p>
 <table>
 <thead>
