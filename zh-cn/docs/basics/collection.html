@@ -75,7 +75,7 @@
 <p>需要融合其他业务系统数据到ClickHouse，<code>Load Data</code> 提供强大的 FQL 数据处理能力，在数据加载的过程中进行处理，而且兼容 MySQL 协议非常方便易用。</p>
 <p><code>Save Data</code>数据分发引擎，数据计算或者流转会在分布式计算引擎中，流转过程中可基于 FQL 进行数据聚合实时反馈业务系统，供实时大屏或监控系统使用。</p>
 <p><code>Save Data</code>数据分发引擎，配置数据计算间隔和持久化周期，数据量累计到一定程度，我们会以Batch的方式，每隔一段时间周期性把数据入库到 ClickHouse 集群或其他业务系统，ClickHouse 建议批量导入数据，每次个批次数据集大于10w。</p>
-<p>ClickHouse &amp; FusionDB 是整个 JDP 平台的核心，提供分布式数据库功能。此外我们还提供更多的选择，如：你可以通过<code>Load Data</code>中数据流转视图功能，将数据从一个系统(例如：RDBMS导入到Kafka)和<code>Save Data</code>数据存储引擎，将动态计算 &amp; 批量计算的结果分发到各个业务系统(例如：Kafka Topic内容到 HDFS File/ClickHouse/RDBMS/etc)</p>
+<p>ClickHouse &amp; FusionDB 是整个 JDP 平台的核心，提供分布式数据库功能。此外我们还提供更多的选择，如：你可以通过<code>Load Data</code>中数据流转视图功能，将数据从一个系统(例如：RDBMS导入到Kafka)，利用<code>Save Data</code>数据存储引擎，将动态计算的结果分发到各个业务系统(例如：Kafka Topic内容到 HDFS File/ClickHouse/RDBMS/etc)</p>
 <p>如下列出大多数已支持的连接器。</p>
 <h2 id="data-collect-processor-transferd"><a class="markdown-anchor" href="#data-collect-processor-transferd">#</a> Data Collect Processor &amp; Transferd</h2>
 <p>通过持续集成系统jdp-package大量的重复测试，<code>Data Collect</code>Processor的功能在JDP平台全部支持，这一切得益于强大的开源社区力量。</p>
