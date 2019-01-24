@@ -5,53 +5,41 @@ title: 功能概览
 
 ![JDP-Core-Data](http://www.fusionlab.cn/zh-cn/page/img/JDP-Core-Data.png)
 
-`Core Data`是企业核心数据管理平台，拥有强大易用的数据收集、数据分析、数据可视化能力。
+`Core Data`是企业核心数据管理平台，拥有强大易用的数据加载、数据分析、数据可视化能力。
 
-`Data Pipeline`全链路数据流程管理，实时监测，动态数据流，可视化流程。
+`Stream SQL`提供分布式的动态数据计算以及数据服务。
 
 `Core Data`核心功能：
 
-* Data Collect
-    - 基于Web的用户界面
-    - 分布式Agent
-    - 低延迟 vs 高吞吐量
-    - 多数据源集成
-    - 高度可配置化
-    - 全链路数据流跟踪
-    - 容错处理
-    - 高可扩展性
-        + 自定义收集器
-        + 快速开发测试
-    - 安全
-        + SSL，SSH，HTTPS，数据流加密等
-        + 多租户、授权、策略管理
+* Data Load
+    - 分布式批 & 流统一引擎
+    - FQL for Everyone
+    - 跨数据源加载数据
+    - FQL 数据预处理
+    - 高效率 & 谓词下推
 
-* CoreEngine
+* Stream SQL
+    - 事件 & 时序处理
+    - 流数据处理
+    - 高性能 & 低延迟
     - 动态数据表
     - 可变Schema
-    - 实时数据流
-    - 动态数据流转
+    - 简单 & 易用 FQL
 
-* ClickStream
-    - 事件流监测
-    - 流数据处理
-    - 流数据感知
-    - 高性能 & 低延迟
-
-* Transfer Data
+* Save Data
     - 实时数据分发
     - 批量数据分发
     - 简单强大的`Policy engine`
-    - 基于Web的用户界面
+    - 基于 FQL 简单易用
 
 * Distributed Database
-    - 高性能 & 低延迟
-    - 分布式SQL引擎
+    - 高性能 & 低延迟分析
+    - 分布式 FQL 引擎
     - 海量数据存储
     - 多租户 & 授权 & 资源管理
     - 设计简洁 & 线性扩张
     - 高可靠，无中心、数据分片
-    - 远端数据源连接
+    - 跨数据源融合能力
 
 * Visualization Data
     - 丰富的数据可视化集

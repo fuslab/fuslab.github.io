@@ -5,23 +5,21 @@ title: 数据分析
 
 ## Core Data
 
-`JDP`数据分析核心引擎ClickHouse、ClickStream、CoreEngine。
+`JDP`数据分析核心引擎FusionDB，一个高性能 & 简单易用真正实现批流统一的分布式数据库引擎。
 
-* CoreEngine - 分布式`Dynamic Data Table`存储引擎。
-
-* ClickStream - 分布式`Dynamic Data`计算引擎。
+* FusionDB - 批流统一 & 实时计算，实现跨数据源的融合分析。
 
 * ClickHouse - 开源的分布式列式DBMS数据库。
 
-### CoreEngine
+### Batch
 
-CoreEngine动态数据存储引擎，存储实时流动的数据，每一种数据源都拥有唯一schema，在数据存储前经过`Data Collect`进行校验或者简单处理，必须符合schema描述，保障数据质量。
+FusionDB 静态数据计算引擎，利用强大 `Data Source Connect` 实现各种数据源的融合计算，每一种数据源都有标准的 Schema 描述，支持动态加载数据到 FusionDB，在 FusionDB 中一切数据都是 Table，任何的数据源都支持 ALL in FQL, 利用 FQL 的强大数据处理能力，实现跨数据源的融合的分析；`FQL for Everyone` 简单 & 易用 & 灵活。
 
-CoreEngine动态数据表，实时数据流转，可供ClickStream实时动态计算，低延迟分析海量数据。
+FusionDB 支持简单事件、时序数据处理，拥有强大的海量数据处理能力。
 
-### ClickStream
+### Stream
 
-ClickStream动态计算引擎，分布式实时计算`CoreEngine`中实时流动数据，利用`CoreEngine`提供的Schema，低延迟分析海量数据，提供实时数据服务。
+FusionDB 动态计算引擎，分布式实时计算`Core Engine`中实时流动的数据，利用`Meta`中提供的 Schema，实现低延迟分析海量数据，提供实时数据服务。
 
 ### ClickHouse
 
@@ -50,5 +48,9 @@ JDP在未来的版本中提供B、C方案，在界面进行选择，目前仅仅
 `A`方案最小集群一个node，经过测试1个Node依然可以正常使用。只要随着不断的加节点，达到横向扩展计算和存储能力，由于是新分片，不会对现有数据和业务产生影响。
 
 ## Core AI
+
+> 待续。。。
+
+## FusionDB
 
 > 待续。。。
