@@ -6,9 +6,8 @@
     </ul>
 
     <div class="license">
-        © 2018 <strong>FusionLab Team.</strong>
-    <!-- Released under the MIT License <a href="https://github.com/fusionlabcn"><img src="/images/github.svg"/></a> -->
-
+        © 2021 <strong>FusionLab Team.</strong>
+    Released under the Apache License v2 <a href="https://github.com/fuslab"><img src="/images/github.svg"/></a>
     </div>
   </footer>
 </div>
