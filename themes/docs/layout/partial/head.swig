@@ -1,4 +1,4 @@
-<title>{{ page.title || 'JDataFlow Platfrom' }} - {{ __('index.slogan') }}</title>
+<title>{{ page.title || 'JDataFlow Platform' }} - {{ __('index.slogan') }}</title>
 <meta charset="utf-8">
 <meta name="description" content="{{ __('') }}">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
