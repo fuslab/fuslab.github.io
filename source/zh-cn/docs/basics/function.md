@@ -1,7 +1,7 @@
 title: 功能概览
 ---
 
-**JDP是企业级Core Data & Core AI 流分析平台， JDP全称`JDataFlow Platfrom`**
+**JDP是企业级Core Data & Core AI 流分析平台， JDP全称`JDataFlow Platform`**
 
 ![JDP-Core-Data](http://www.fusionlab.cn/zh-cn/page/img/JDP-Core-Data.png)
 

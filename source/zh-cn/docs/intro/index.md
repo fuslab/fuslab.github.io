@@ -1,7 +1,7 @@
 title: JDP 是什么?
 ---
 
-**JDP是企业级Core Data & Core AI 流分析平台， JDP全称`JDataFlow Platfrom`**，分析流动中的数据。JDP并不是一个框架，而是一套完整的解决方案，主要包括：
+**JDP是企业级Core Data & Core AI 流分析平台， JDP全称`JDataFlow Platform`**，分析流动中的数据。JDP并不是一个框架，而是一套完整的解决方案，主要包括：
 
 - 基础理念：`JDP` 基于Streaming Analytics Visualization架构。
 - 开发工具：`Ambari`，基于Ambari源码扩展，JDP更好的融合Ambari。
