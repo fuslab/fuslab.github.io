@@ -27,67 +27,55 @@ FusionDB 是一个开源的分布式 FQL 数据库引擎，加速多数据源融
 * Load Data 
 
 ```
-LOAD 'HDFS'.'/usr/test' FORMAT 'CSV' OPTIONS('header'='true') AS T WHERE A=1 AND B=2;
+LOAD ‘hdfs://cluster1/usr/test’ FORMAT 'CSV' OPTIONS('header'='true') AS T WHERE A=1 AND B=2;
 
-LOAD 'ADLS'.'/usr/test' FORMAT 'JSON' AS T WHERE A=1 AND B=2;
+LOAD ‘adls://usr/test’ FORMAT 'JSON' AS T WHERE A=1 AND B=2;
 
-LOAD 'S3'.'/usr/test' FORMAT 'PARQUET' OPTIONS('fs.s3a.access.key'='ACCESS-KEY','fs.s3a.secret.key'='SECRET-KEY','fs.s3a.endpoint'='s3.REGION.amazonaws.com') AS T WHERE A=1 AND B=2;
+LOAD ‘s3://usr/test’ FORMAT 'PARQUET' AS T WHERE A=1 AND B=2;
 
-LOAD 'LOCAL'.'/usr/test' FORMAT 'ORC' AS T WHERE A=1 AND B=2;
+LOAD ‘file:///usr/test' FORMAT 'ORC' AS T WHERE A=1 AND B=2;
 
-LOAD 'MYSQL' OPTIONS ('url'='jdbc:mysql://node1:3306/default','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
+LOAD 'MYSQL' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
 
-LOAD 'HBASE' OPTIONS ('hbase.zookeeper.quorum'='node1:2181,node2:2181,node3:2181','hbase.zookeeper.property.clientPort'='2181','htable'='default.t1') AS T1 WHERE A=1 AND B=2;
+LOAD 'HBASE' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
 
-LOAD 'Hive' OPTIONS ('hive.metastore.uris'='thrift://<host>:<port>','hive.metastore.warehouse.dir'='/usr/hive/warehouse','fs.default.name'='hdfs:///','user'='hive','password'='123') AS T1 WHERE A=1 AND B=2;
+LOAD 'ES' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
 ```
 
 * Transformation Data
 
 ```
-Spark SQL/Stream SQL + TVF(SQL++)    
+Load Data
+---------------
 
-Create Stream Table t1（
-  id int,
-  name string,
-  createTime date
-) with (
-  'stype' = 'kafka',
-  'ktopic' = 'user',
-  'auto.offset.reset' = 'earliest',
-  'bootstrap.servers' = 'localhost:9092',
-  'group.id' = 'query-consumer-1',
-  'enable.auto.commit' = 'true',
-  'session.timeout.ms' = '30000',
-  ...
-)
+SQL Plus: SQL/Stream SQL + TVF(SQL++)          完全兼容标准 SQL 99 以及扩展的SQL++（Stream SQL）
 
-select * from t1 where createTime > 20180102 as stream_test;
-
-SAVE APPEND stream_test TO 'MYSQL' OPTIONS ('url'='jdbc:mysql://node1:3306/default','dbtable'='default.t1','user'='admin', 'password'='123');
+---------------
+Save Data
 ```
 
 * Save Data
 
 ```
-SAVE T1 TO 'LOCAL'.'/usr/a' FORMAT 'PARQUET' PARTITION BY COL2;
+SAVE T1 TO ‘file:///usr/a' FORMAT 'PARQUET' PARTITION BY COL2;
 
-SAVE APPEND T1 TO 'HDFS'.'/usr/a' FORMAT 'ORC' OPTIONS ('hdfs.root'='hdp02:8020')  PARTITION BY COL2;
+SAVE APPEND T1 TO ‘hdfs://cluster1/usr/a' FORMAT 'ORC' OPTIONS ('hdfs.root'='hdp02:8020')  PARTITION BY COL2;
 
-SAVE OVERWRITE T1 TO 'S3'.'/usr/a' FORMAT 'CSV' OPTIONS ('aws.bucket.key'='dkfajsdlfjasdkjf') PARTITION BY COL2;
+SAVE OVERWRITE T1 TO ‘s3://usr/a’ FORMAT 'CSV' OPTIONS ('bucket.key'='dkfajsdlfjasdkjf') PARTITION BY COL2;
 
-SAVE IGNORE T1 TO 'ADLS'.'/usr/a' FORMAT 'JSON' OPTIONS ('azure.key'='dkljafsdkfjlas') PARTITION BY COL2;
+SAVE IGNORE T1 TO ‘ADLS://usr/a’ FORMAT 'JSON' OPTIONS ('azure.key'='dkljafsdkfjlas') PARTITION BY COL2;
 
-SAVE T1 TO 'MYSQL' OPTIONS ('url'='jdbc:mysql://node1:3306/default','dbtable'='default.t1','user'='admin', 'password'='123');
+SAVE T1 TO 'MYSQL' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123');
 
-SAVE APPEND T1 TO 'ORACLE' OPTIONS ('url'='jdbc:oracle:thin:@node1:1521:orcl','dbtable'='ora1.a1','user'='admin', 'password'='123');
+SAVE APPEND T1 TO 'ORACLE' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='ora1.a1','user'='admin', 'password'='123');
 
-SAVE OVERWRITE T1 TO 'SQLServer' OPTIONS ('url'='jdbc:microsoft:sqlserver://node1:1433','dbtable'='ora1.a1','user'='admin', 'password'='123');
+SAVE OVERWRITE T1 TO 'SQLServer' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='ora1.a1','user'='admin', 'password'='123');
 ```
 
-## 什么样的项目适合用FusionDB
+## 什么样的项目适合用 FusionDB
 
 * 跨数据源融合
 * 海量数据加载
 * 海量数据分析
+* 批流统一引擎
 * ...
