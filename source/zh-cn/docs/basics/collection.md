@@ -1,6 +1,6 @@
 title: 数据融合
 ---
-**JDP是企业级Core Data & Core AI 流分析平台， JDP全称`JDataFlow Platform`**
+**企业级 Core Data & Core AI 统一分析平台， JDP全称`JDataFlow Platform`**
 
 ## Core Data
 

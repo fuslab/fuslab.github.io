@@ -1,7 +1,7 @@
 title: 数据分析
 ---
 
-**JDP是企业级Core Data & Core AI 流分析平台， JDP全称`JDataFlow Platform`**
+**企业级Core Data & Core AI 统一分析平台， JDP全称`JDataFlow Platform`**
 
 ## Core Data
 

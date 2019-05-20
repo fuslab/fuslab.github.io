@@ -1,7 +1,7 @@
 title: 快速入门 
 ---
 
-**JDP是企业级Core Data & Core AI 流分析平台， JDP全称`JDataFlow Platform`**
+**JDP是企业级Core Data & Core AI 统一分析平台， JDP全称`JDataFlow Platform`**
 
 通过如下介绍，我们一步一步搭建基于JDP流分析平台的集群，能让你快速部署并且使用JDP进行业务应用开发。
 
