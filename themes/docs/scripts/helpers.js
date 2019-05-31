@@ -60,15 +60,15 @@ hexo.extend.helper.register('menu_link', function() {
 });
 
 // 返回首页
-// console.log(`${this.page.lang}${url}`)
 hexo.extend.helper.register('index_link', function(url) {
+  // console.log(`${this.page.lang}`)
+  // console.log(`${url}`)
   if (!url) {
-    url = '/zh-cn';
+    url = '/';
   }
   if (this.page.lang !== 'en') {
-    return `${url}`;
+    return `/${this.page.lang}${url}`;
   }
-  
   return url;
 });
 

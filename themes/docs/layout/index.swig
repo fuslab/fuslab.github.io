@@ -7,7 +7,7 @@
       <h1 class="fadeInUp animated"><p style="font-weight:bold;font-size:48px;">JDataFlow Platform</p>A better open source DataFlow Platform, One-stop solution & Friendly developer</h1>
       <p style="font-size: 22px;" class="fadeInUp animated">{{ page.subtitle }}</p>
       <p class="banner-button fadeInUp animated">
-        <a class="btn btn-primary" href="{{ index_link('/zh-cn/docs/intro/quickstart.html') }}">{{ __('index.getstart') }}</a>
+        <a class="btn btn-primary" href="{{ index_link('/docs/intro/quickstart.html') }}">{{ __('index.getstart') }}</a>
         <a class="btn btn-secondary" href="http://www.fusionlab.cn">Home</a>
       </p>
     </div>
