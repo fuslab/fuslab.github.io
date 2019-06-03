@@ -13,3 +13,7 @@ JDP 3.2 版本未能支持机器学习负载工作，我们引入Docker、Hadoop
 
 [Enterprise-AI-Platform-Design-And-Impl-v3.2](https://drive.google.com/open?id=1bdkUDc6myVT6NDZpUO2hQjdUuwNiM0UN)
 
+### 企业级 Core Data && Core AI 统一分析平台设计与实现
+
+[Enterprise-Core-Data & Core-AI-Unified-Analysis-Platform-v2](https://drive.google.com/file/d/1x9uDkEwl0SyTdvBC2Sy6X0fSbVYQJSjY/view?usp=sharing)
+
