@@ -214,10 +214,10 @@ systemctl start httpd
 systemctl enable httpd
 ```
 
-[3] 下载JDP-3.1.0.0安装包
+[3] 下载JDP-3.2.0.0安装包
 
 ```
-wget http://www.fusionlab.cn/jdp/repo-as-tarball/3.1.0.0/JDP-3.1.0.0-centos7-rpm.tar.gz
+wget http://www.fusionlab.cn/jdp/repo-as-tarball/3.2.0.0/JDP-3.2.0.0-centos7-rpm.tar.gz
 ```
 
 > 软件包比较大，大约需要下载5min 
@@ -234,12 +234,12 @@ wget http://www.fusionlab.cn/jdp/repo-as-tarball/3.1.0.0/JDP-3.1.0.0-centos7-rpm
 密码:frsj
 ```
 
-[4] 解压JDP-3.1.0.0到`/var/www/html`路径
+[4] 解压JDP-3.2.0.0到`/var/www/html`路径
 
 ```
 mkdir /var/www/html/jdp/
 
-tar -zxvf JDP-3.1.0.0-centos7-rpm.tar.gz -C /var/www/html/jdp/
+tar -zxvf JDP-3.2.0.0-centos7-rpm.tar.gz -C /var/www/html/jdp/
 ```
 
 [5] 验证JDP源可用性
@@ -251,10 +251,10 @@ tar -zxvf JDP-3.1.0.0-centos7-rpm.tar.gz -C /var/www/html/jdp/
 [f1@host html]$ tree -L 2 jdp/centos7/
 jdp/centos7/
 ├── 3.x
-│   ├── 3.1.0.0
+│   ├── 3.2.0.0
 │   ├── ambari
 │   ├── ambari.repo
-│   └── jdp-3.1.repo
+│   └── jdp-3.2.repo
 └── utils
     └── 1.1.0
 ```
@@ -417,14 +417,14 @@ ambari-server 启动成功，开始安装JDP集群。
 
 #### Step2 - Select Version
 
-选择使用JDP的版本，默认支持3.1版本的安装部署，鼠标点击“Use Local Repository”填入之前制作的本地仓库源地址,点击下一步：
+选择使用JDP的版本，默认支持3.2版本的安装部署，鼠标点击“Use Local Repository”填入之前制作的本地仓库源地址,点击下一步：
 
 ![Step2-Select-Version](http://www.fusionlab.cn/zh-cn/docs/intro/img/Step2-Select-Version.png)
 
 如上图，默认支持redhat7：
 
-* JDP-3.1 Base URL：`http://you_httpd_ip/jdp/centos7/3.x/3.1.0.0`
-* JDP-3.1 JDP-UTILS-1.1.0 Base URL：`http://you_httpd_ip/jdp/centos7/3.x/3.1.0.0`
+* JDP-3.2 Base URL：`http://you_httpd_ip/jdp/centos7/3.x/3.2.0.0`
+* JDP-3.2 JDP-UTILS-1.1.0 Base URL：`http://you_httpd_ip/jdp/centos7/3.x/3.2.0.0`
 
 #### Step3 - Install Options
 
@@ -444,7 +444,7 @@ ambari-server 启动成功，开始安装JDP集群。
 
 #### Step4 - Choose Services
 
-选择你需要安装的服务，目前JDP提供7个组件的自动化安装和部署维护。如下图所示：
+选择你需要安装的服务，目前JDP提供12个组件的自动化安装和部署维护。如下图所示：
 
 ![Step4-Choose-Services](http://www.fusionlab.cn/zh-cn/docs/intro/img/Step4-Choose-Services.png)
 
