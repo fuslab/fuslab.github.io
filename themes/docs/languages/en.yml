@@ -10,7 +10,7 @@ menu:
   # plugins: 插件
   # release: 发布日志
 index:
-  slogan: "高性能流分析平台"
+  slogan: "企业统一分析平台"
   feature11: "进程管理"
   feature12: "内置的进程管理和负载均衡"
   feature21: "自定义"
