@@ -61,6 +61,29 @@
   <article class="markdown-body">
     <h1>快速启动</h1>
     <p>** Fusiondb is a simple and powerful federated database engine **</p>
+<h2 id="postgresql-psql-connects-fusiondb"><a class="markdown-anchor" href="#postgresql-psql-connects-fusiondb">#</a> PostgreSQL: psql connects FusionDB</h2>
+<ul>
+<li>方案一：正常工作，fdb 为超级用户，不需要密码。</li>
+</ul>
+<p>安装方式：</p>
+<p>MacOS</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">brew install libpq # or brew install postgresql or brew remove postgresql@11.2</span><br><span class="line"></span><br><span class="line">默认路径：/usr/local/opt/libpq/bin/psql</span><br></pre></td></tr></table></figure></p>
+<p>Ubuntu</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get install postgresql-client</span><br></pre></td></tr></table></figure></p>
+<p>redhat</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-redhat10-10-2.noarch.rpm  </span><br><span class="line"></span><br><span class="line">sudo yum install postgresql10</span><br></pre></td></tr></table></figure></p>
+<p><code>注意</code>: 如果已安装postgresql数据库，则已经自带了psql，不需要单独安装client。</p>
+<p>连接方式：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">psql &quot;sslmode=disable host=192.168.1.2 port=54322 dbname=default&quot; --username=fdb</span><br><span class="line"></span><br><span class="line">default=&gt; show tables;</span><br><span class="line"> default  | boxes          | f</span><br><span class="line"> default  | boxes_1        | f</span><br><span class="line"></span><br><span class="line">default=&gt; select * from my_table;</span><br><span class="line"> xiaoming |  29</span><br><span class="line"> xiaohua  |  30</span><br></pre></td></tr></table></figure></p>
+<p><code>注意</code>: 目前默认slmode=disable，在未来的版本中会enabled.</p>
+<ul>
+<li>方案二：不正常工作，主要是一些函数不支持，未来会适配。</li>
+</ul>
+<p>连接方式：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pgcli &apos;postgres://fdb:123@172.27.137.232:54322/default?sslmode=disable&apos;</span><br></pre></td></tr></table></figure></p>
+<p>Error:</p>
+<p><figure class="highlight plain"><figcaption><span>detected in 'Query': cn.fusiondb.fdb.sql.parser.ParseException: missing 'FUNCTIONS' at '<eof>'(line 1, pos 8)</eof></span></figcaption><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">== SQL ==</span><br><span class="line">SHOW ALL</span><br></pre></td></tr></table></figure></p>
+<p><code>pgcli 参考</code>：https://github.com/dbcli/pgcli</p>
 <h2 id="fusiondb-gui-psequel"><a class="markdown-anchor" href="#fusiondb-gui-psequel">#</a> FusionDB GUI PSequel</h2>
 <ul>
 <li>host：FusionDB SQL Server 主机 IP</li>
