@@ -130,6 +130,7 @@
 <li>Load db2 table</li>
 </ul>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load db2 options(&apos;url&apos;=&apos;jdbc:db2://192.168.0.3:50000/testdb&apos;,&apos;dbtable&apos;=&apos;db2ins.test1&apos;,&apos;user&apos;= &apos;db2user1&apos;,&apos;password&apos;=&apos;@123&apos;) AS db2_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM db2_t1 LIMIT 100;</span><br></pre></td></tr></table></figure></p>
+<p><code>注意：</code> DB2 查询时，当前仅支持 <code>dbtable</code>，暂时不支持 query 参数。如果传递 query 参数，会报错：<code>com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-20521, SQLSTATE=428HV, SQLERRMC=_;7, DRIVER=4.13.127</code>。</p>
 <ul>
 <li>Load teradata table</li>
 </ul>
