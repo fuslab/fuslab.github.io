@@ -156,6 +156,36 @@ SELECT * FROM sqlserver_t1;
 
 `注意`: SQLServer 数据库比较特殊，必须填写 database 或 databaseName 字段，映射为 SQLServer 的 database 名称。和其他数据库区别的地方是 `dbtable` 不能直 `[dbname.tablename]`写法，`dbtable` 只能填写要访问的tablename。如果不填写 `dbtable`，而换成 `query` 参数，则直接写 `select` 语句查询，`select`  查询语句不能带 `databaseName`，只能填写 tablename，如上 query parameter 示例。
 
+* Load db2 table
+
+```
+load db2 options('url'='jdbc:db2://192.168.0.3:50000/testdb','dbtable'='db2ins.test1','user'= 'db2user1','password'='@123') AS db2_t1;
+
+SELECT * FROM db2_t1 LIMIT 100;
+```
+
+`注意：` DB2 查询时，当前仅支持 `dbtable`，暂时不支持 query 参数。如果传递 query 参数，会报错：`com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-20521, SQLSTATE=428HV, SQLERRMC=_;7, DRIVER=4.13.127`。
+
+* Load teradata table 
+
+```
+case1: 
+
+load teradata options('url'='jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA','dbtable'='csv_case_tbl','user'= 'dbc','password'='dbc') AS tera_t1;
+
+case2:
+
+load teradata options('url'='jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA','query'='select * from csv_case_tbl sample 10','user'= 'dbc','password'='dbc') AS tera_t1;
+
+case3: 
+
+load teradata options('url'='jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA','query'='select TOP 1000 * from csv_case_tbl','user'= 'dbc','password'='dbc') AS tera_t1;
+
+SELECT * FROM tera_t1;
+```
+
+`注意`: Teradata 数据库本身比较特殊，查阅资料发现不支持 `limit` 语法，load 语法中这里的 query 传递的是目标数据库的 SQL 语法，只有 load 到 FusionDB 系统才能统一利用 FQL 进行处理。Teradata 语法的特殊性，导致 load 语法执行时相对耗时，sample 会比 top 语法执行耗时更久，在其他数据库目前未发现此类情况。
+
 3. Save table to HDFS
 
 ```
@@ -320,6 +350,12 @@ SELECT * FROM tt1;
 ```
 
 注意：选中想要执行的语句，点击运行按钮进行 FQL 的执行。此工具选中多条 FQL 执行时，逗号分隔，不支持执行，由于是第三方工具，目前暂未修复此问题。
+
+`JDBC URL Reference`：
+
+- [Specifying a JDBC name and URL 8.2.0](https://www.ibm.com/support/knowledgecenter/SS69YH_8.2.0/cads_manager_ddita/model_management/thick/idh_dlg_datasource_jdbc_name.html)
+
+- [Specifying a JDBC name and URL 10.1.1](https://www.ibm.com/support/knowledgecenter/en/SSEP7J_10.1.1/com.ibm.swg.ba.cognos.vvm_ag_guide.10.1.1.doc/c_ag_samjdcurlform.html)
 
 ### FusionDB Join Pandas
 
