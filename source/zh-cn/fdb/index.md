@@ -48,7 +48,7 @@ LOAD 'ES' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user
 Load Data
 ---------------
 
-SQL Plus: SQL/Stream SQL + TVF(SQL++)          完全兼容标准 SQL 99 以及扩展的SQL++（Stream SQL）
+SQL Plus: SQL and Stream SQL + TVF(SQL++)          完全兼容标准 SQL 99 以及扩展的SQL++（Stream SQL）
 
 ---------------
 Save Data

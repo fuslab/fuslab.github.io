@@ -3,6 +3,72 @@ title: 快速启动
 
 ** Fusiondb is a simple and powerful federated database engine **
 
+## PostgreSQL: psql connects FusionDB
+
+* 正常工作，fdb 为超级用户，不需要密码。
+
+安装方式：
+
+MacOS
+
+```
+brew install libpq # or brew install postgresql or brew remove postgresql@11.2
+
+默认路径：/usr/local/opt/libpq/bin/psql
+```
+
+Ubuntu
+
+```
+sudo apt-get install postgresql-client  
+```
+
+redhat
+
+```
+sudo yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-redhat10-10-2.noarch.rpm  
+
+sudo yum install postgresql10  
+```
+
+`注意`: 如果已安装postgresql数据库，则已经自带了psql，不需要单独安装client。
+
+连接方式：
+
+```
+psql "sslmode=disable host=192.168.1.2 port=54322 dbname=default" --username=fdb
+
+default=> show tables;
+ default  | boxes          | f
+ default  | boxes_1        | f
+
+default=> select * from my_table;
+ xiaoming |  29
+ xiaohua  |  30
+```
+
+`注意`: 目前默认slmode=disable，在未来的版本中会enabled.
+
+## PostgreSQL: pgcli connects FusionDB
+
+* 不正常工作，主要是一些函数不支持，未来会适配。
+
+连接方式：
+
+```
+pgcli 'postgres://fdb:123@172.27.137.232:54322/default?sslmode=disable'
+```
+
+Error: 
+
+```Exception detected in 'Query': cn.fusiondb.fdb.sql.parser.ParseException: missing 'FUNCTIONS' at '<EOF>'(line 1, pos 8)
+
+== SQL ==
+SHOW ALL
+```
+
+`pgcli 参考`：https://github.com/dbcli/pgcli
+
 ## FusionDB GUI PSequel
 
 - host：FusionDB SQL Server 主机 IP
@@ -32,7 +98,9 @@ SELECT * FROM store_sales LIMIT 200;
 show tables;
 ```
 
-2. Load MySQL Table
+2. Load RDBMS Table
+
+* Load MySQL Table
 
 ```
 load 'mysql' options('url'='jdbc:mysql://mysql-test1:3306/test','dbtable'='person','user'= 'root','password'='root') AS mysql_t2;
@@ -40,7 +108,7 @@ load 'mysql' options('url'='jdbc:mysql://mysql-test1:3306/test','dbtable'='perso
 SELECT * FROM mysql_t2;
 ```
 
-3. Load PostgreSQL table
+* Load PostgreSQL table
 
 ```
 load 'postgresql' options('url'='jdbc:postgresql://pg-server-1:5430/test','dbtable'='person','user'= 'xujiang','password'='123') AS gp_t1;
@@ -48,7 +116,7 @@ load 'postgresql' options('url'='jdbc:postgresql://pg-server-1:5430/test','dbtab
 SELECT * FROM gp_t1;
 ```
 
-4. MySQL Table Join PostgreSQL Table
+* MySQL Table Join PostgreSQL Table
 
 ```
 SELECT * FROM mysql_t2 LEFT JOIN gp_t1 ON mysql_t2.id = gp_t1.id;
@@ -56,7 +124,39 @@ SELECT * FROM mysql_t2 LEFT JOIN gp_t1 ON mysql_t2.id = gp_t1.id;
 SELECT * FROM mysql_t2;
 ```
 
-5. Save table to HDFS
+* Load datasource in query
+
+```
+Case1: query all data
+
+load 'mysql' options('url'='jdbc:mysql://your_hostname:53306/test','dbtable'='t1','user'='root','password'='root') AS mysql_t2;
+
+SELECT * FROM mysql_t2;
+
+Case2: query supports pushdown
+
+load 'mysql' options('url'='jdbc:mysql://your_hostname:53306/test','query'='select * from test.t1 where id=2','user'='root','password'='root') AS mysql_t2;
+
+SELECT * FROM mysql_t2;
+```
+
+* Load SQLServer Table 
+
+```
+## dbtable parameter
+
+load sqlserver options('url'='jdbc:sqlserver://msql-node16:1433','databaseName'='test','dbtable'='test_all_types','user'='SA','password'='@123.') AS sqlserver_t1;
+
+## query parameter
+
+load sqlserver options('url'='jdbc:sqlserver://msql-node16:1433','database'='test','query'='select * from test_all_types where column_binary is null','user'='SA','password'='@123.') AS sqlserver_t1;
+
+SELECT * FROM sqlserver_t1;
+```
+
+`注意`: SQLServer 数据库比较特殊，必须填写 database 或 databaseName 字段，映射为 SQLServer 的 database 名称。和其他数据库区别的地方是 `dbtable` 不能直 `[dbname.tablename]`写法，`dbtable` 只能填写要访问的tablename。如果不填写 `dbtable`，而换成 `query` 参数，则直接写 `select` 语句查询，`select`  查询语句不能带 `databaseName`，只能填写 tablename，如上 query parameter 示例。
+
+3. Save table to HDFS
 
 ```
 save APPEND gp_t1 TO 'hdfs://jdp-2:8020/tmp/pg_test' format parquet;
@@ -66,6 +166,157 @@ save overwrite mysql_t2 TO 'hdfs://jdp-2:8020/tmp/pg_test' FORMAT PARQUET;
 load 'hdfs://jdp-2:8020/tmp/pg_test' format parquet AS pg_test;
 
 SELECT * FROM pg_test;
+```
+
+4. Create Table in HDFS parquet
+
+```
+CREATE [TEMPORARY] TABLE [IF NOT EXISTS] [db_name.]table_name
+  [(col_name1 col_type1 [COMMENT col_comment1], ...)]
+  USING datasource
+  [OPTIONS (key1=val1, key2=val2, ...)]
+  [PARTITIONED BY (col_name1, col_name2, ...)]
+  [CLUSTERED BY (col_name3, col_name4, ...) INTO num_buckets BUCKETS]
+  [LOCATION path]
+  [COMMENT table_comment]
+  [TBLPROPERTIES (key1=val1, key2=val2, ...)]
+  [AS select_statement]
+```
+
+Examples
+
+```
+## create table in parquet/orc/csv/textfile/etc.
+
+CREATE TABLE t3 USING parquet Options(path 'hdfs://plat-xujiang-cdsw:8020/tmp/web_site_test');
+
+CREATE TABLE web_site_test USING PARQUET LOCATION 'hdfs://plat-xujiang-cdsw:8020/tmp/web_site_test';
+
+## Create table
+
+Case1:
+
+CREATE TABLE t11 (`id` BIGINT, `name` STRING, `age` INT, `birthday` DATE);
+
+INSERT INTO TABLE t11 values(1, '百度', 10, now()),(2, '阿里', 12, now());
+
+SELECT * FROM t11;
+
+CREATE TABLE boxes (width INT, length INT, height INT) USING CSV;
+
+INSERT INTO TABLE boxes values(1, 33, 222),(2, 99, 888);
+
+SELECT * FROM boxes;
+
+Case 2:
+
+CREATE TABLE boxes_1(width INT, length INT, height INT)
+  USING PARQUET
+  OPTIONS ('compression'='snappy');
+
+INSERT INTO TABLE boxes_1 values(1, 33, 222),(2, 99, 888);
+
+SELECT * FROM boxes_1;
+
+CREATE TABLE boxes_5(width INT, length INT, height INT)
+  USING ORC
+  OPTIONS ('compression'='snappy');
+
+INSERT INTO TABLE boxes_5 values(1, 33, 222),(2, 99, 888);
+
+SELECT * FROM boxes_5;
+
+CREATE TABLE boxes_6(width INT, length INT, height INT)
+  USING CSV
+  OPTIONS ('compression'='snappy');
+
+INSERT INTO TABLE boxes_6 values(1, 33, 222),(2, 99, 888);
+
+SELECT * FROM boxes_6;
+
+## Create temporary table
+CREATE TEMPORARY TABLE boxes
+  (width INT, length INT, height INT)
+  USING PARQUET
+  OPTIONS ('compression'='snappy')
+
+## Create parquet table with select result
+CREATE TABLE rectangles
+  USING PARQUET
+  PARTITIONED BY (width)
+  CLUSTERED BY (length) INTO 8 buckets
+  AS SELECT * FROM boxes
+```
+
+5. Create Table with Hive format
+
+```
+CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [db_name.]table_name
+  [(col_name1[:] col_type1 [COMMENT col_comment1], ...)]
+  [COMMENT table_comment]
+  [PARTITIONED BY (col_name2[:] col_type2 [COMMENT col_comment2], ...)]
+  [ROW FORMAT row_format]
+  [STORED AS file_format]
+  [LOCATION path]
+  [TBLPROPERTIES (key1=val1, key2=val2, ...)]
+  [AS select_statement]
+
+row_format:
+  : SERDE serde_cls [WITH SERDEPROPERTIES (key1=val1, key2=val2, ...)]
+  | DELIMITED [FIELDS TERMINATED BY char [ESCAPED BY char]]
+      [COLLECTION ITEMS TERMINATED BY char]
+      [MAP KEYS TERMINATED BY char]
+      [LINES TERMINATED BY char]
+      [NULL DEFINED AS char]
+
+file_format:
+  : TEXTFILE | SEQUENCEFILE | RCFILE | ORC | PARQUET | AVRO
+  | INPUTFORMAT input_fmt OUTPUTFORMAT output_fmt
+```
+
+Examples
+
+```
+DROP TABLE my_table;
+
+CREATE TABLE my_table (name STRING, age INT);
+
+INSERT INTO TABLE my_table values('xiaoming', 29),('xiaohua', 30);
+
+SELECT * FROM my_table;
+
+CREATE TABLE my_table_1 (name STRING, age INT)
+  COMMENT 'This table is partitioned'
+  PARTITIONED BY (hair_color STRING COMMENT 'This is a column comment')
+  TBLPROPERTIES ('status'='staging', 'owner'='andrew');
+
+CREATE TABLE my_table_2 (name STRING, age INT)
+  COMMENT 'This table specifies a custom SerDe'
+  ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.orc.OrcSerde'
+  STORED AS
+      INPUTFORMAT 'org.apache.hadoop.hive.ql.io.orc.OrcInputFormat'
+      OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat';
+
+CREATE TABLE my_table_3 (name STRING, age INT)
+  COMMENT 'This table uses the CSV format'
+  ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+  STORED AS TEXTFILE;
+
+CREATE TABLE your_table
+  COMMENT 'This table is created with existing data'
+  AS SELECT * FROM my_table;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS my_table_4 (name STRING, age INT)
+  COMMENT 'This table is created with existing data'
+  LOCATION 'spark-warehouse/tables/my_existing_table';
+
+SELECT * FROM my_table_4;
+
+## Create Table Like
+
+CREATE TABLE IF NOT EXISTS default.tt1 LIKE default.t3 LOCATION 'hdfs://plat-xujiang-cdsw:8020/tmp/web_site_test';
+
+SELECT * FROM tt1;
 ```
 
 注意：选中想要执行的语句，点击运行按钮进行 FQL 的执行。此工具选中多条 FQL 执行时，逗号分隔，不支持执行，由于是第三方工具，目前暂未修复此问题。
