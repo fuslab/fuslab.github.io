@@ -159,7 +159,12 @@ SELECT * FROM sqlserver_t1;
 * Load db2 table
 
 ```
-load db2 options('url'='jdbc:db2://192.168.0.3:50000/testdb','dbtable'='db2ins.test1','user'= 'db2user1','password'='@123') AS db2_t1;
+
+load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='db2user.test21','user'= 'db2user','password'='@123') AS db2_t1;
+
+SELECT * FROM db2_t1 LIMIT 1000;
+
+load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='test2','user'= 'db2user','password'='@123') AS db2_t1;
 
 SELECT * FROM db2_t1 LIMIT 100;
 ```
@@ -186,10 +191,38 @@ SELECT * FROM tera_t1;
 
 `注意`: Teradata 数据库本身比较特殊，查阅资料发现不支持 `limit` 语法，load 语法中这里的 query 传递的是目标数据库的 SQL 语法，只有 load 到 FusionDB 系统才能统一利用 FQL 进行处理。Teradata 语法的特殊性，导致 load 语法执行时相对耗时，sample 会比 top 语法执行耗时更久，在其他数据库目前未发现此类情况。
 
+* Load Greenplum table 
+
+```
+load postgresql options('url'='jdbc:postgresql://192.168.0.3:5432/test','dbtable'='company','user'= 'xujiang','password'='@123') AS green_t1;
+
+load postgresql options('url'='jdbc:postgresql://92.168.0.3:5432/test','query'='select * from company','user'= 'xujiang','password'='@123') AS green_t1;
+
+SELECT * FROM green_t1;
+```
+
+* Load Huawei GaussDB table
+
+```
+load postgresql options('url'='jdbc:postgresql://182.10.2.4:25308/postgres','dbtable'='test','user'= 'gsdb','password'='gsdb@') AS gauss_t1;
+
+load postgresql options('url'='jdbc:postgresql://182.10.2.4:25308/postgres','query'='select * from test','user'= 'gsdb','password'='gsdb@') AS gauss_t1;
+
+select * from gauss_t1;
+```
+
+* Load oracle table 
+
+```
+load oracle options('url'='jdbc:oracle:thin:@//192.27.128.122:49161/xe','dbtable'='sample_500W150C','user'='TEST','password'='@123') AS ora_t1;
+
+SELECT * FROM ora_t1;
+```
+
 3. Save table to HDFS
 
 ```
-save APPEND gp_t1 TO 'hdfs://jdp-2:8020/tmp/pg_test' format parquet;
+save APPEND gauss_t1 TO 'hdfs://jdp-2:8020/tmp/pg_test' format parquet;
 
 save overwrite mysql_t2 TO 'hdfs://jdp-2:8020/tmp/pg_test' FORMAT PARQUET;
 
