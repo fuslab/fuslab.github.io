@@ -60,7 +60,66 @@
     <div class="page-main">
   <article class="markdown-body">
     <h1>Data Sources</h1>
-    
+    <p>FusionDB 支持直接访问 Oracle、MySQL、PostgreSQL、Greenplum、SQLServer、DB2、Teradata、ClickHouse、HDFS、S3、ADLS、OSS 中的数据做为数据源，实现跨数据源的融合计算以及复杂的数据分析。</p>
+<h2 id="rdbms-示例"><a class="markdown-anchor" href="#rdbms-示例">#</a> RDBMS 示例</h2>
+<ul>
+<li>Load MySQL Table</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load &apos;mysql&apos; options(&apos;url&apos;=&apos;jdbc:mysql://mysql-test1:3306/test&apos;,&apos;dbtable&apos;=&apos;person&apos;,&apos;user&apos;= &apos;root&apos;,&apos;password&apos;=&apos;root&apos;) AS mysql_t2;</span><br><span class="line"></span><br><span class="line">SELECT * FROM mysql_t2;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>Load PostgreSQL table</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load &apos;postgresql&apos; options(&apos;url&apos;=&apos;jdbc:postgresql://pg-server-1:5430/test&apos;,&apos;dbtable&apos;=&apos;person&apos;,&apos;user&apos;= &apos;xujiang&apos;,&apos;password&apos;=&apos;123&apos;) AS gp_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM gp_t1;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>MySQL Table Join PostgreSQL Table</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT * FROM mysql_t2 LEFT JOIN gp_t1 ON mysql_t2.id = gp_t1.id;</span><br><span class="line"></span><br><span class="line">SELECT * FROM mysql_t2;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>Load datasource in query</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Case1: query all data</span><br><span class="line"></span><br><span class="line">load &apos;mysql&apos; options(&apos;url&apos;=&apos;jdbc:mysql://your_hostname:53306/test&apos;,&apos;dbtable&apos;=&apos;t1&apos;,&apos;user&apos;=&apos;root&apos;,&apos;password&apos;=&apos;root&apos;) AS mysql_t2;</span><br><span class="line"></span><br><span class="line">SELECT * FROM mysql_t2;</span><br><span class="line"></span><br><span class="line">Case2: query supports pushdown</span><br><span class="line"></span><br><span class="line">load &apos;mysql&apos; options(&apos;url&apos;=&apos;jdbc:mysql://your_hostname:53306/test&apos;,&apos;query&apos;=&apos;select * from test.t1 where id=2&apos;,&apos;user&apos;=&apos;root&apos;,&apos;password&apos;=&apos;root&apos;) AS mysql_t2;</span><br><span class="line"></span><br><span class="line">SELECT * FROM mysql_t2;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>Load SQLServer Table</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">## dbtable parameter</span><br><span class="line"></span><br><span class="line">load sqlserver options(&apos;url&apos;=&apos;jdbc:sqlserver://msql-node16:1433&apos;,&apos;databaseName&apos;=&apos;test&apos;,&apos;dbtable&apos;=&apos;test_all_types&apos;,&apos;user&apos;=&apos;SA&apos;,&apos;password&apos;=&apos;@123.&apos;) AS sqlserver_t1;</span><br><span class="line"></span><br><span class="line">## query parameter</span><br><span class="line"></span><br><span class="line">load sqlserver options(&apos;url&apos;=&apos;jdbc:sqlserver://msql-node16:1433&apos;,&apos;database&apos;=&apos;test&apos;,&apos;query&apos;=&apos;select * from test_all_types where column_binary is null&apos;,&apos;user&apos;=&apos;SA&apos;,&apos;password&apos;=&apos;@123.&apos;) AS sqlserver_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM sqlserver_t1;</span><br></pre></td></tr></table></figure></p>
+<p><code>注意</code>: SQLServer 数据库比较特殊，必须填写 database 或 databaseName 字段，映射为 SQLServer 的 database 名称。和其他数据库区别的地方是 <code>dbtable</code> 不能直 <code>[dbname.tablename]</code>写法，<code>dbtable</code> 只能填写要访问的tablename。如果不填写 <code>dbtable</code>，而换成 <code>query</code> 参数，则直接写 <code>select</code> 语句查询，<code>select</code>  查询语句不能带 <code>databaseName</code>，只能填写 tablename，如上 query parameter 示例。</p>
+<ul>
+<li>Load db2 table</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">## Case1:</span><br><span class="line"></span><br><span class="line">load db2 options(&apos;url&apos;=&apos;jdbc:db2://192.168.9.2:50000/db2test&apos;,&apos;dbtable&apos;=&apos;db2user.test21&apos;,&apos;user&apos;= &apos;db2user&apos;,&apos;password&apos;=&apos;@123&apos;) AS db2_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM db2_t1 LIMIT 1000;</span><br><span class="line"></span><br><span class="line">## Case2:</span><br><span class="line"></span><br><span class="line">load db2 options(&apos;url&apos;=&apos;jdbc:db2://192.168.9.2:50000/db2test&apos;,&apos;dbtable&apos;=&apos;test2&apos;,&apos;user&apos;= &apos;db2user&apos;,&apos;password&apos;=&apos;@123&apos;) AS db2_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM db2_t1 LIMIT 100;</span><br><span class="line"></span><br><span class="line">## Case3:</span><br><span class="line"></span><br><span class="line">load db2 options(&apos;url&apos;=&apos;jdbc:db2://192.168.9.2:50000/db2test&apos;,&apos;dbtable&apos;=&apos;(select * from TEST2)&apos;,&apos;user&apos;= &apos;db2user&apos;,&apos;password&apos;=&apos;@123&apos;) AS db2_t1;</span><br><span class="line"></span><br><span class="line">select * from db2_t1;</span><br></pre></td></tr></table></figure></p>
+<p><code>注意：</code> DB2 查询时，当前仅支持 <code>dbtable</code>，暂时不支持 query 参数。如果传递 query 参数，会报错：<code>com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-20521, SQLSTATE=428HV, SQLERRMC=_;7, DRIVER=4.13.127</code>。</p>
+<ul>
+<li>Load teradata table</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">case1: </span><br><span class="line"></span><br><span class="line">load teradata options(&apos;url&apos;=&apos;jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA&apos;,&apos;dbtable&apos;=&apos;csv_case_tbl&apos;,&apos;user&apos;= &apos;dbc&apos;,&apos;password&apos;=&apos;dbc&apos;) AS tera_t1;</span><br><span class="line"></span><br><span class="line">case2:</span><br><span class="line"></span><br><span class="line">load teradata options(&apos;url&apos;=&apos;jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA&apos;,&apos;query&apos;=&apos;select * from csv_case_tbl sample 10&apos;,&apos;user&apos;= &apos;dbc&apos;,&apos;password&apos;=&apos;dbc&apos;) AS tera_t1;</span><br><span class="line"></span><br><span class="line">case3: </span><br><span class="line"></span><br><span class="line">load teradata options(&apos;url&apos;=&apos;jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA&apos;,&apos;query&apos;=&apos;select TOP 1000 * from csv_case_tbl&apos;,&apos;user&apos;= &apos;dbc&apos;,&apos;password&apos;=&apos;dbc&apos;) AS tera_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM tera_t1;</span><br></pre></td></tr></table></figure></p>
+<p><code>注意</code>: Teradata 数据库本身比较特殊，查阅资料发现不支持 <code>limit</code> 语法，load 语法中这里的 query 传递的是目标数据库的 SQL 语法，只有 load 到 FusionDB 系统才能统一利用 FQL 进行处理。Teradata 语法的特殊性，导致 load 语法执行时相对耗时，sample 会比 top 语法执行耗时更久，在其他数据库目前未发现此类情况。</p>
+<ul>
+<li>Load Greenplum table</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load postgresql options(&apos;url&apos;=&apos;jdbc:postgresql://192.168.0.3:5432/test&apos;,&apos;dbtable&apos;=&apos;company&apos;,&apos;user&apos;= &apos;xujiang&apos;,&apos;password&apos;=&apos;@123&apos;) AS green_t1;</span><br><span class="line"></span><br><span class="line">load postgresql options(&apos;url&apos;=&apos;jdbc:postgresql://92.168.0.3:5432/test&apos;,&apos;query&apos;=&apos;select * from company&apos;,&apos;user&apos;= &apos;xujiang&apos;,&apos;password&apos;=&apos;@123&apos;) AS green_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM green_t1;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>Load Huawei GaussDB table</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load postgresql options(&apos;url&apos;=&apos;jdbc:postgresql://182.10.2.4:25308/postgres&apos;,&apos;dbtable&apos;=&apos;test&apos;,&apos;user&apos;= &apos;gsdb&apos;,&apos;password&apos;=&apos;gsdb@&apos;) AS gauss_t1;</span><br><span class="line"></span><br><span class="line">load postgresql options(&apos;url&apos;=&apos;jdbc:postgresql://182.10.2.4:25308/postgres&apos;,&apos;query&apos;=&apos;select * from test&apos;,&apos;user&apos;= &apos;gsdb&apos;,&apos;password&apos;=&apos;gsdb@&apos;) AS gauss_t1;</span><br><span class="line"></span><br><span class="line">select * from gauss_t1;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>Load oracle table</li>
+</ul>
+<p>介绍 dbtable 参数的基本使用，全量加载 Oracle 的 table</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load oracle options(&apos;url&apos;=&apos;jdbc:oracle:thin:@//192.27.128.122:49161/xe&apos;,&apos;dbtable&apos;=&apos;sample_500W150C&apos;,&apos;user&apos;=&apos;TEST&apos;,&apos;password&apos;=&apos;@123&apos;) AS ora_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM ora_t1;</span><br></pre></td></tr></table></figure></p>
+<p>介绍 dbtable 的一种进阶用法，当前 <code>Oracle</code> 数据源还不支持 <code>query</code> 参数和下推，只能在 dbtable 中写<code>子查询</code>，支持子查询下推，具体示例如下：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load oracle options(&apos;url&apos;=&apos;jdbc:oracle:thin:@//192.27.128.122:49161/xe&apos;,&apos;dbtable&apos;=&apos;(select * from sample_500W150C where rownum &lt; 11)&apos;,&apos;user&apos;=&apos;TEST&apos;,&apos;password&apos;=&apos;@123&apos;) AS ora_t1;</span><br><span class="line"></span><br><span class="line">SELECT count(*) FROM ora_t1;</span><br></pre></td></tr></table></figure></p>
+<p><code>问题</code>：如果填写 <code>query</code> 参数，提示错误<code>Exception message:java.sql.SQLSyntaxErrorException: ORA-00911: invalid character</code>，影响版本 JDP 3.2 及以下版本。修复于 JDP 3.3+，FusinoDB 0.1.1 版本。</p>
+<p><code>解决</code>：绕过的方案 dbtable 中填写括号括起来的子查询即可。其他数据库遇到类似问题亦可使用此种方法解决。</p>
+<h2 id="data-lake"><a class="markdown-anchor" href="#data-lake">#</a> Data Lake</h2>
+<ul>
+<li>Load table in Data Lake</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LOAD ‘hdfs://cluster1/usr/test’ FORMAT CSV OPTIONS(&apos;header&apos;=&apos;true&apos;) AS T WHERE A=1 AND B=2;</span><br><span class="line"></span><br><span class="line">LOAD ‘adls://usr/test’ FORMAT JSON AS T WHERE A=1 AND B=2;</span><br><span class="line"></span><br><span class="line">LOAD ‘s3://usr/test’ FORMAT PARQUET AS T WHERE A=1 AND B=2;</span><br><span class="line"></span><br><span class="line">LOAD &apos;oss://usr/test’ FORMAT PARQUET AS T WHERE A=1 AND B=2;</span><br><span class="line"></span><br><span class="line">LOAD ‘file:///usr/test&apos; FORMAT ORC AS T WHERE A=1 AND B=2;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>Save table to Data Lake</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SAVE APPEND T1 TO ‘hdfs://cluster1/usr/a&apos; FORMAT &apos;ORC&apos; OPTIONS (&apos;hdfs.root&apos;=&apos;hdp02:8020&apos;)  PARTITION BY COL2;</span><br><span class="line"></span><br><span class="line">SAVE OVERWRITE T1 TO ‘s3://usr/a’ FORMAT &apos;CSV&apos; OPTIONS (&apos;bucket.key&apos;=&apos;dkfajsdlfjasdkjf&apos;) PARTITION BY COL2;</span><br><span class="line"></span><br><span class="line">SAVE IGNORE T1 TO ‘adls://usr/a’ FORMAT &apos;JSON&apos; OPTIONS (&apos;azure.key&apos;=&apos;dkljafsdkfjlas&apos;) PARTITION BY COL2;</span><br><span class="line"></span><br><span class="line">SAVE IGNORE T1 TO ‘oss://usr/a’ FORMAT &apos;JSON&apos; OPTIONS (&apos;azure.key&apos;=&apos;dkljafsdkfjlas&apos;) PARTITION BY COL2;</span><br></pre></td></tr></table></figure></p>
+
   </article>
   
   <aside id="mobileAside" class="toc">
