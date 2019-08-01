@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>快速启动 - 企业统一分析平台</title>
+  <title>快速启动 - 企业级 Core Data & Core AI 统一分析平台</title>
 <meta charset="utf-8">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -147,7 +147,12 @@
 <ul>
 <li>Load oracle table</li>
 </ul>
+<p>介绍 dbtable 参数的基本使用，全量加载 Oracle 的 table</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load oracle options(&apos;url&apos;=&apos;jdbc:oracle:thin:@//192.27.128.122:49161/xe&apos;,&apos;dbtable&apos;=&apos;sample_500W150C&apos;,&apos;user&apos;=&apos;TEST&apos;,&apos;password&apos;=&apos;@123&apos;) AS ora_t1;</span><br><span class="line"></span><br><span class="line">SELECT * FROM ora_t1;</span><br></pre></td></tr></table></figure></p>
+<p>介绍 dbtable 的一种进阶用法，当前 <code>Oracle</code> 数据源还不支持 <code>query</code> 参数和下推，只能在 dbtable 中写<code>子查询</code>，支持子查询下推，具体示例如下：</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">load oracle options(&apos;url&apos;=&apos;jdbc:oracle:thin:@//192.27.128.122:49161/xe&apos;,&apos;dbtable&apos;=&apos;(select * from sample_500W150C where rownum &lt; 11)&apos;,&apos;user&apos;=&apos;TEST&apos;,&apos;password&apos;=&apos;@123&apos;) AS ora_t1;</span><br><span class="line"></span><br><span class="line">SELECT count(*) FROM ora_t1;</span><br></pre></td></tr></table></figure></p>
+<p><code>问题</code>：如果填写 <code>query</code> 参数，提示错误<code>Exception message:java.sql.SQLSyntaxErrorException: ORA-00911: invalid character</code>，影响版本 JDP 3.2 及以下版本。修复于 JDP 3.3+，FusinoDB 0.1.1 版本。</p>
+<p><code>解决</code>：绕过的方案 dbtable 中填写括号括起来的子查询即可。其他数据库遇到类似问题亦可使用此种方法解决。</p>
 <ol start="3">
 <li>Save table to HDFS</li>
 </ol>
@@ -224,7 +229,7 @@
     
     <ul><li><a href="/zh-cn/docs/intro/" alt="指南" class="">指南</a></li><li><a href="/zh-cn/page/process.html" alt="Core Data" class="">Core Data</a></li><li><a href="/zh-cn/page/ai.html" alt="Core AI" class="">Core AI</a></li><li><a href="/zh-cn/fdb/index.html" alt="FusionDB" class="">FusionDB</a></li><li><a href="/zh-cn/page/user.html" alt="使用案例" class="">使用案例</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/fdb/index.html" class="">FusionDB 是什么</a></li><li><a href="/zh-cn/fdb/quickstart.html" class="cur">快速启动</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/fdb/index.html" class="">FusionDB 是什么</a></li><li><a href="/zh-cn/fdb/quickstart.html" class="cur">快速启动</a></li><li><a href="/zh-cn/fdb/user-guide.html" class="">用户指南</a></li><li><a href="/zh-cn/fdb/administration-guide.html" class="">管理指南</a></li><li><a href="/zh-cn/fdb/sql-guide.html" class="">SQL 指南</a></li><li><a href="/zh-cn/fdb/data-lake-guide.html" class="">Data Lake</a></li><li><a href="/zh-cn/fdb/data-sources.html" class="">Data Sources</a></li><li><a href="/zh-cn/fdb/release-notes.html" class="">Release Notes</a></li></ul></dd></dl>
 </aside>
 <script src="/js/mobile-aside.js"></script>
 
