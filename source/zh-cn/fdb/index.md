@@ -3,7 +3,7 @@ title: FusionDB
 
 ## FusionDB 是什么？
 
-FusionDB 是一个开源的分布式 FQL 数据库引擎，加速多数据源融合。
+FusionDB 是一个开源的分布式数据库引擎，加速多数据源融合。
 
 ![FusionDB Architecture](http://www.fusionlab.cn/zh-cn/fdb/img/fusiondb-architecture.png)
 
@@ -35,11 +35,11 @@ LOAD ‘s3://usr/test’ FORMAT 'PARQUET' AS T WHERE A=1 AND B=2;
 
 LOAD ‘file:///usr/test' FORMAT 'ORC' AS T WHERE A=1 AND B=2;
 
-LOAD 'MYSQL' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
+LOAD MYSQL OPTIONS ('url'='jdbc:mysql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
 
-LOAD 'HBASE' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
+LOAD postgresql OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
 
-LOAD 'ES' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
+LOAD clickhouse OPTIONS ('url'='jdbc:clickhouse:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
 ```
 
 * Transformation Data
@@ -65,11 +65,11 @@ SAVE OVERWRITE T1 TO ‘s3://usr/a’ FORMAT 'CSV' OPTIONS ('bucket.key'='dkfajs
 
 SAVE IGNORE T1 TO ‘ADLS://usr/a’ FORMAT 'JSON' OPTIONS ('azure.key'='dkljafsdkfjlas') PARTITION BY COL2;
 
-SAVE T1 TO 'MYSQL' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123');
+SAVE T1 TO MYSQL OPTIONS ('url'='jdbc:mysql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123');
 
-SAVE APPEND T1 TO 'ORACLE' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='ora1.a1','user'='admin', 'password'='123');
+SAVE APPEND T1 TO oracle OPTIONS ('url'='jdbc:oracle:dbserver','dbtable'='ora1.a1','user'='admin', 'password'='123');
 
-SAVE OVERWRITE T1 TO 'SQLServer' OPTIONS ('url'='jdbc:postgresql:dbserver','dbtable'='ora1.a1','user'='admin', 'password'='123');
+SAVE OVERWRITE T1 TO sqlserver OPTIONS ('url'='jdbc:sqlserver:dbserver','dbtable'='ora1.a1','user'='admin', 'password'='123');
 ```
 
 ## 什么样的项目适合用 FusionDB

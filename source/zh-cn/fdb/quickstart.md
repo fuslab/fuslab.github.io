@@ -159,14 +159,23 @@ SELECT * FROM sqlserver_t1;
 * Load db2 table
 
 ```
+## Case1:
 
 load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='db2user.test21','user'= 'db2user','password'='@123') AS db2_t1;
 
 SELECT * FROM db2_t1 LIMIT 1000;
 
+## Case2:
+
 load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='test2','user'= 'db2user','password'='@123') AS db2_t1;
 
 SELECT * FROM db2_t1 LIMIT 100;
+
+## Case3:
+
+load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='(select * from TEST2)','user'= 'db2user','password'='@123') AS db2_t1;
+
+select * from db2_t1;
 ```
 
 `注意：` DB2 查询时，当前仅支持 `dbtable`，暂时不支持 query 参数。如果传递 query 参数，会报错：`com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-20521, SQLSTATE=428HV, SQLERRMC=_;7, DRIVER=4.13.127`。
@@ -213,11 +222,25 @@ select * from gauss_t1;
 
 * Load oracle table 
 
+介绍 dbtable 参数的基本使用，全量加载 Oracle 的 table
+
 ```
 load oracle options('url'='jdbc:oracle:thin:@//192.27.128.122:49161/xe','dbtable'='sample_500W150C','user'='TEST','password'='@123') AS ora_t1;
 
 SELECT * FROM ora_t1;
 ```
+
+介绍 dbtable 的一种进阶用法，当前 `Oracle` 数据源还不支持 `query` 参数和下推，只能在 dbtable 中写`子查询`，支持子查询下推，具体示例如下：
+
+```
+load oracle options('url'='jdbc:oracle:thin:@//192.27.128.122:49161/xe','dbtable'='(select * from sample_500W150C where rownum < 11)','user'='TEST','password'='@123') AS ora_t1;
+
+SELECT count(*) FROM ora_t1;
+```
+
+`问题`：如果填写 `query` 参数，提示错误`Exception message:java.sql.SQLSyntaxErrorException: ORA-00911: invalid character`，影响版本 JDP 3.2 及以下版本。修复于 JDP 3.3+，FusinoDB 0.1.1 版本。
+
+`解决`：绕过的方案 dbtable 中填写括号括起来的子查询即可。其他数据库遇到类似问题亦可使用此种方法解决。
 
 3. Save table to HDFS
 

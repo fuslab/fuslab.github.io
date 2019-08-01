@@ -1,4 +1,4 @@
-title: JDP环境及部署问题汇总
+title: 部署问题
 ---
 
 ## 1. Superset: `Error: libmysqlclient.so.20: cannot open shared object file: No such file or directory"`

@@ -10,14 +10,14 @@ menu:
   # release: 发布日志
 
 index:
-  slogan: "企业统一分析平台"
-  feature11: "进程管理"
-  feature12: "内置的进程管理和负载均衡"
-  feature21: "自定义"
-  feature31: "强大的插件系统"
-  feature32: "插件系统可插拔及可扩展随心所欲"
-  getstart: "开始使用"
-  readmore: "查看更多"
+  slogan: "企业级 Core Data & Core AI 统一分析平台"
+  feature11: "批流统一"
+  feature12: "实时计算"
+  feature21: "简单易用"
+  feature31: "实时数据分析"
+  feature32: "实时数据聚合"
+  getstart: "Ad-Hoc Query"
+  readmore: "可视化报表"
 
 header:
   translations: "切换语言"
@@ -45,12 +45,12 @@ sidebar:
     Advanced: 进阶
     Architecture: 架构概览
     Build: 系统构建 
-    Roadmap: 路线图
+    Roadmap: 开发计划
 
     Community: 社区
     Contributing: 如何贡献
     Member Guide: 成员指南
-    Resource: 资源
+    Resource: 相关资源
 
     FAQ: 常见问题
     Deploy: 部署问题
@@ -59,4 +59,12 @@ sidebar:
   fdb:
     Intro: 新手指南
     What is FusionDB: FusionDB 是什么
-    FusionDB Get Start: 快速启动
+    Get Start: 快速启动
+    User Guide: 用户指南
+    Administration Guide: 管理指南
+    SQL Guide: SQL 指南
+    Data Lake Guide: Data Lake
+    Data Sources: Data Sources
+    Release Notes: Release Notes 
+
+

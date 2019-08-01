@@ -36,4 +36,10 @@ docs:
 fdb:
     Intro:
       What is FusionDB: /fdb/index.html
-      FusionDB Get Start: /fdb/quickstart.html
+      Get Start: /fdb/quickstart.html
+      User Guide: /fdb/user-guide.html
+      Administration Guide: /fdb/administration-guide.html
+      SQL Guide: /fdb/sql-guide.html
+      Data Lake Guide: /fdb/data-lake-guide.html
+      Data Sources: /fdb/data-sources.html
+      Release Notes: /fdb/release-notes.html
