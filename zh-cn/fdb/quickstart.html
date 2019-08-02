@@ -91,7 +91,7 @@ JDP 可视化安装参阅：http://www.fusionlab.cn/zh-cn/docs/intro/quickstart.
 <p><code>注意</code>: 如果已安装postgresql数据库，则已经自带了psql，不需要单独安装client。</p>
 <p>连接方式：</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">psql &quot;sslmode=disable host=192.168.1.2 port=54322 dbname=default&quot; --username=fdb</span><br><span class="line"></span><br><span class="line">default=&gt; show tables;</span><br><span class="line"> default  | boxes          | f</span><br><span class="line"> default  | boxes_1        | f</span><br><span class="line"></span><br><span class="line">default=&gt; select * from my_table;</span><br><span class="line"> xiaoming |  29</span><br><span class="line"> xiaohua  |  30</span><br></pre></td></tr></table></figure></p>
-<p><code>注意</code>: 目前默认slmode=disable，在未来的版本中会enabled.</p>
+<p><code>注意</code>: 默认sslmode=disable，在未来的版本中会enabled.</p>
 <h4 id="pgcli-connects-fusiondb"><a class="markdown-anchor" href="#pgcli-connects-fusiondb">#</a> Pgcli connects FusionDB</h4>
 <ul>
 <li>不正常工作，主要是一些函数不支持，未来会适配。</li>
