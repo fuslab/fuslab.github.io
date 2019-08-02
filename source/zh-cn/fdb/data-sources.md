@@ -81,6 +81,12 @@ SELECT * FROM db2_t1 LIMIT 100;
 load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='(select * from TEST2)','user'= 'db2user','password'='@123') AS db2_t1;
 
 select * from db2_t1;
+
+## Case4:
+
+load db2 options('url'='jdbc:db2://192.168.9.2:50001/db2test','dbtable'='(select * from TEST2 FETCH FIRST 100 ROWS ONLY)','user'= 'db2user','password'='@123') AS db2_t1;
+
+SELECT count(*) FROM db2_t1;
 ```
 
 `注意：` DB2 查询时，当前仅支持 `dbtable`，暂时不支持 query 参数。如果传递 query 参数，会报错：`com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-20521, SQLSTATE=428HV, SQLERRMC=_;7, DRIVER=4.13.127`。
@@ -147,6 +153,12 @@ SELECT count(*) FROM ora_t1;
 
 `解决`：绕过的方案 dbtable 中填写括号括起来的子查询即可。其他数据库遇到类似问题亦可使用此种方法解决。
 
+`JDBC URL Reference`：
+
+- [Specifying a JDBC name and URL 8.2.0](https://www.ibm.com/support/knowledgecenter/SS69YH_8.2.0/cads_manager_ddita/model_management/thick/idh_dlg_datasource_jdbc_name.html)
+
+- [Specifying a JDBC name and URL 10.1.1](https://www.ibm.com/support/knowledgecenter/en/SSEP7J_10.1.1/com.ibm.swg.ba.cognos.vvm_ag_guide.10.1.1.doc/c_ag_samjdcurlform.html)
+
 ## Data Lake 
 
 * Load table in Data Lake
@@ -154,11 +166,11 @@ SELECT count(*) FROM ora_t1;
 ```
 LOAD ‘hdfs://cluster1/usr/test’ FORMAT CSV OPTIONS('header'='true') AS T WHERE A=1 AND B=2;
 
-LOAD ‘adls://usr/test’ FORMAT JSON AS T WHERE A=1 AND B=2;
+LOAD ‘adl://usr/test’ FORMAT JSON OPTIONS('azure.id'='xxx', 'azure.credential'='xxx', 'azure.oauth2.refresh.url'='xxx') AS T;
 
-LOAD ‘s3://usr/test’ FORMAT PARQUET AS T WHERE A=1 AND B=2;
+LOAD ‘s3a://usr/test’ FORMAT PARQUET OPTIONS('fs.s3a.access.key'='<your-s3-access-key>', 'fs.s3a.secret.key'='<your-s3-secret-key>') AS T WHERE A=1 AND B=2;
 
-LOAD 'oss://usr/test’ FORMAT PARQUET AS T WHERE A=1 AND B=2;
+LOAD 'oss://{your-bucket-name}/usr/test’ FORMAT PARQUET OPTIONS ('AccessKeyId'='<your oss access key id>', 'AccessKeySecret'='your oss access key secret') AS T WHERE A=1 AND B=2;
 
 LOAD ‘file:///usr/test' FORMAT ORC AS T WHERE A=1 AND B=2;
 ```
@@ -166,12 +178,13 @@ LOAD ‘file:///usr/test' FORMAT ORC AS T WHERE A=1 AND B=2;
 * Save table to Data Lake
 
 ```
-SAVE APPEND T1 TO ‘hdfs://cluster1/usr/a' FORMAT 'ORC' OPTIONS ('hdfs.root'='hdp02:8020')  PARTITION BY COL2;
+SAVE APPEND T1 TO ‘hdfs://cluster1/data/db/t1' FORMAT 'ORC';
 
-SAVE OVERWRITE T1 TO ‘s3://usr/a’ FORMAT 'CSV' OPTIONS ('bucket.key'='dkfajsdlfjasdkjf') PARTITION BY COL2;
+SAVE OVERWRITE T1 TO ‘s3a://usr/a’ FORMAT 'CSV' OPTIONS ('fs.s3a.access.key'='<your-s3-access-key>', 'fs.s3a.secret.key'='<your-s3-secret-key>') PARTITION BY COL2;
 
-SAVE IGNORE T1 TO ‘adls://usr/a’ FORMAT 'JSON' OPTIONS ('azure.key'='dkljafsdkfjlas') PARTITION BY COL2;
+SAVE IGNORE T1 TO ‘adl://<your-adls-account>.azuredatalakestore.net/<path>/<to>/<table>’ FORMAT 'JSON' OPTIONS ('azure.id'='xxx', 'azure.credential'='xxx', 'azure.oauth2.refresh.url'='xxx') PARTITION BY COL2;
 
-SAVE IGNORE T1 TO ‘oss://usr/a’ FORMAT 'JSON' OPTIONS ('azure.key'='dkljafsdkfjlas') PARTITION BY COL2;
+SAVE IGNORE T1 TO ‘oss://{your-bucket-name}/usr/test’ FORMAT 'JSON' OPTIONS ('AccessKeyId'='<your oss access key id>', 'AccessKeySecret'='your oss access key secret') PARTITION BY COL2;
 ```
 
+## FAQ

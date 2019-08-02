@@ -27,13 +27,15 @@ FusionDB 是一个开源的分布式数据库引擎，加速多数据源融合�
 * Load Data 
 
 ```
-LOAD ‘hdfs://cluster1/usr/test’ FORMAT 'CSV' OPTIONS('header'='true') AS T WHERE A=1 AND B=2;
+LOAD ‘hdfs://cluster1/usr/test’ FORMAT CSV OPTIONS('header'='true') AS T WHERE A=1 AND B=2;
 
-LOAD ‘adls://usr/test’ FORMAT 'JSON' AS T WHERE A=1 AND B=2;
+LOAD ‘adl://usr/test’ FORMAT JSON OPTIONS('azure.id'='xxx', 'azure.credential'='xxx', 'azure.oauth2.refresh.url'='xxx') AS T;
 
-LOAD ‘s3://usr/test’ FORMAT 'PARQUET' AS T WHERE A=1 AND B=2;
+LOAD ‘s3a://usr/test’ FORMAT PARQUET OPTIONS('fs.s3a.access.key'='<your-s3-access-key>', 'fs.s3a.secret.key'='<your-s3-secret-key>') AS T WHERE A=1 AND B=2;
 
-LOAD ‘file:///usr/test' FORMAT 'ORC' AS T WHERE A=1 AND B=2;
+LOAD 'oss://{your-bucket-name}/usr/test’ FORMAT PARQUET OPTIONS ('AccessKeyId'='<your oss access key id>', 'AccessKeySecret'='your oss access key secret') AS T WHERE A=1 AND B=2;
+
+LOAD ‘file:///usr/test' FORMAT ORC AS T WHERE A=1 AND B=2;
 
 LOAD MYSQL OPTIONS ('url'='jdbc:mysql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123') AS T1 WHERE A=1 AND B=2;
 
@@ -57,13 +59,13 @@ Save Data
 * Save Data
 
 ```
-SAVE T1 TO ‘file:///usr/a' FORMAT 'PARQUET' PARTITION BY COL2;
+SAVE APPEND T1 TO ‘hdfs://cluster1/data/db/t1' FORMAT 'ORC';
 
-SAVE APPEND T1 TO ‘hdfs://cluster1/usr/a' FORMAT 'ORC' OPTIONS ('hdfs.root'='hdp02:8020')  PARTITION BY COL2;
+SAVE OVERWRITE T1 TO ‘s3a://usr/a’ FORMAT 'CSV' OPTIONS ('fs.s3a.access.key'='<your-s3-access-key>', 'fs.s3a.secret.key'='<your-s3-secret-key>') PARTITION BY COL2;
 
-SAVE OVERWRITE T1 TO ‘s3://usr/a’ FORMAT 'CSV' OPTIONS ('bucket.key'='dkfajsdlfjasdkjf') PARTITION BY COL2;
+SAVE IGNORE T1 TO ‘adl://<your-adls-account>.azuredatalakestore.net/<path>/<to>/<table>’ FORMAT 'JSON' OPTIONS ('azure.id'='xxx', 'azure.credential'='xxx', 'azure.oauth2.refresh.url'='xxx') PARTITION BY COL2;
 
-SAVE IGNORE T1 TO ‘ADLS://usr/a’ FORMAT 'JSON' OPTIONS ('azure.key'='dkljafsdkfjlas') PARTITION BY COL2;
+SAVE IGNORE T1 TO ‘oss://{your-bucket-name}/usr/test’ FORMAT 'JSON' OPTIONS ('AccessKeyId'='<your oss access key id>', 'AccessKeySecret'='your oss access key secret') PARTITION BY COL2;
 
 SAVE T1 TO MYSQL OPTIONS ('url'='jdbc:mysql:dbserver','dbtable'='default.t1','user'='admin', 'password'='123');
 

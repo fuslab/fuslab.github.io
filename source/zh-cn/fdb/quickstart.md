@@ -1,13 +1,35 @@
 title: 快速启动 
 ---
 
-** Fusiondb is a simple and powerful federated database engine **
+Fusiondb is a simple and powerful federated database engine.
 
-## PostgreSQL: psql connects FusionDB
+## 快速安装
+
+FusionDB 提供两种安装模式：
+
+- Docker 快速安装体验单机版。
+- JDP 一体化的产品，可视化的根据安装向导进行安装。
+
+Docker 安装请参阅：https://github.com/FusionDB/fql-training
+JDP 可视化安装参阅：http://www.fusionlab.cn/zh-cn/docs/intro/quickstart.html
+
+## 快速访问
+
+FusionDB 是一个分布式的 OLAP 数据库，兼容 PostgreSQL 协议。用户可以使用标准的JDBC/ODBC 和 FusionDB 进行交互，示例如下：
+
+- SQL Client 方式
+- GUI 工具
+
+
+### SQL Client 方式
+
+使用 PostgreSQL 的 psql 与 FusionDB 直接交互或者使用第三方的 pgcli 类工具与 FusionDB 交互。
+
+#### Psql connects FusionDB
 
 * 正常工作，fdb 为超级用户，不需要密码。
 
-安装方式：
+Psql 安装：
 
 MacOS
 
@@ -23,7 +45,7 @@ Ubuntu
 sudo apt-get install postgresql-client  
 ```
 
-redhat
+Redhat
 
 ```
 sudo yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-redhat10-10-2.noarch.rpm  
@@ -47,9 +69,9 @@ default=> select * from my_table;
  xiaohua  |  30
 ```
 
-`注意`: 目前默认slmode=disable，在未来的版本中会enabled.
+`注意`: 默认sslmode=disable，在未来的版本中会enabled.
 
-## PostgreSQL: pgcli connects FusionDB
+#### Pgcli connects FusionDB
 
 * 不正常工作，主要是一些函数不支持，未来会适配。
 
@@ -69,7 +91,11 @@ SHOW ALL
 
 `pgcli 参考`：https://github.com/dbcli/pgcli
 
-## FusionDB GUI PSequel
+### GUI 工具
+
+FusionDB 兼容 PostgreSQL 协议，支持 PostgreSQL 生态的一些可视化 GUI 工具执行 FQL，极大的方便用户快速上手 FusionDB。未来 FusionDB 会支持更多丰富的 SQL 语法。请使用我们测试验证过的第三方工具，否则不保证兼容性。
+
+#### FusionDB GUI PSequel
 
 - host：FusionDB SQL Server 主机 IP
 - user: fdb
@@ -78,15 +104,11 @@ SHOW ALL
 
 ![FusionDB GUI](http://www.fusionlab.cn/zh-cn/fdb/img/psequel-gui.png)
 
-注：使用 Mac 版本进行测试，连接 `Use SSL` 选项不勾选，默认即可，目前还未支持 `Use SSL`模式。
+`注意`：使用 Mac 版本进行测试，连接 `Use SSL` 选项不勾选，默认即可，目前还未支持 `Use SSL`模式。
 
-## QuickStart Examples
+如下几个简单的示例，让我们来快速认识 FusionDB SQL 语法吧。
 
-FusionDB 兼容 PostgreSQL 协议，支持 PostgreSQL 生态的一些可视化 GUI 工具执行 FQL，极大的方便用户快速上手 FusionDB。未来 FusionDB 会支持更多丰富的 SQL 语法。
-
-如下两个简单的例子，让我们来快速认识 FusionDB SQL 语法。
-
-### FusionDB Join Psequel
+##### FusionDB Join Psequel
 
 1. Load HDFS File
 
@@ -140,107 +162,7 @@ load 'mysql' options('url'='jdbc:mysql://your_hostname:53306/test','query'='sele
 SELECT * FROM mysql_t2;
 ```
 
-* Load SQLServer Table 
-
-```
-## dbtable parameter
-
-load sqlserver options('url'='jdbc:sqlserver://msql-node16:1433','databaseName'='test','dbtable'='test_all_types','user'='SA','password'='@123.') AS sqlserver_t1;
-
-## query parameter
-
-load sqlserver options('url'='jdbc:sqlserver://msql-node16:1433','database'='test','query'='select * from test_all_types where column_binary is null','user'='SA','password'='@123.') AS sqlserver_t1;
-
-SELECT * FROM sqlserver_t1;
-```
-
-`注意`: SQLServer 数据库比较特殊，必须填写 database 或 databaseName 字段，映射为 SQLServer 的 database 名称。和其他数据库区别的地方是 `dbtable` 不能直 `[dbname.tablename]`写法，`dbtable` 只能填写要访问的tablename。如果不填写 `dbtable`，而换成 `query` 参数，则直接写 `select` 语句查询，`select`  查询语句不能带 `databaseName`，只能填写 tablename，如上 query parameter 示例。
-
-* Load db2 table
-
-```
-## Case1:
-
-load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='db2user.test21','user'= 'db2user','password'='@123') AS db2_t1;
-
-SELECT * FROM db2_t1 LIMIT 1000;
-
-## Case2:
-
-load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='test2','user'= 'db2user','password'='@123') AS db2_t1;
-
-SELECT * FROM db2_t1 LIMIT 100;
-
-## Case3:
-
-load db2 options('url'='jdbc:db2://192.168.9.2:50000/db2test','dbtable'='(select * from TEST2)','user'= 'db2user','password'='@123') AS db2_t1;
-
-select * from db2_t1;
-```
-
-`注意：` DB2 查询时，当前仅支持 `dbtable`，暂时不支持 query 参数。如果传递 query 参数，会报错：`com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error: SQLCODE=-20521, SQLSTATE=428HV, SQLERRMC=_;7, DRIVER=4.13.127`。
-
-* Load teradata table 
-
-```
-case1: 
-
-load teradata options('url'='jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA','dbtable'='csv_case_tbl','user'= 'dbc','password'='dbc') AS tera_t1;
-
-case2:
-
-load teradata options('url'='jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA','query'='select * from csv_case_tbl sample 10','user'= 'dbc','password'='dbc') AS tera_t1;
-
-case3: 
-
-load teradata options('url'='jdbc:teradata://192.169.0.11/database=test,CHARSET=UTF8,TMODE=TERA','query'='select TOP 1000 * from csv_case_tbl','user'= 'dbc','password'='dbc') AS tera_t1;
-
-SELECT * FROM tera_t1;
-```
-
-`注意`: Teradata 数据库本身比较特殊，查阅资料发现不支持 `limit` 语法，load 语法中这里的 query 传递的是目标数据库的 SQL 语法，只有 load 到 FusionDB 系统才能统一利用 FQL 进行处理。Teradata 语法的特殊性，导致 load 语法执行时相对耗时，sample 会比 top 语法执行耗时更久，在其他数据库目前未发现此类情况。
-
-* Load Greenplum table 
-
-```
-load postgresql options('url'='jdbc:postgresql://192.168.0.3:5432/test','dbtable'='company','user'= 'xujiang','password'='@123') AS green_t1;
-
-load postgresql options('url'='jdbc:postgresql://92.168.0.3:5432/test','query'='select * from company','user'= 'xujiang','password'='@123') AS green_t1;
-
-SELECT * FROM green_t1;
-```
-
-* Load Huawei GaussDB table
-
-```
-load postgresql options('url'='jdbc:postgresql://182.10.2.4:25308/postgres','dbtable'='test','user'= 'gsdb','password'='gsdb@') AS gauss_t1;
-
-load postgresql options('url'='jdbc:postgresql://182.10.2.4:25308/postgres','query'='select * from test','user'= 'gsdb','password'='gsdb@') AS gauss_t1;
-
-select * from gauss_t1;
-```
-
-* Load oracle table 
-
-介绍 dbtable 参数的基本使用，全量加载 Oracle 的 table
-
-```
-load oracle options('url'='jdbc:oracle:thin:@//192.27.128.122:49161/xe','dbtable'='sample_500W150C','user'='TEST','password'='@123') AS ora_t1;
-
-SELECT * FROM ora_t1;
-```
-
-介绍 dbtable 的一种进阶用法，当前 `Oracle` 数据源还不支持 `query` 参数和下推，只能在 dbtable 中写`子查询`，支持子查询下推，具体示例如下：
-
-```
-load oracle options('url'='jdbc:oracle:thin:@//192.27.128.122:49161/xe','dbtable'='(select * from sample_500W150C where rownum < 11)','user'='TEST','password'='@123') AS ora_t1;
-
-SELECT count(*) FROM ora_t1;
-```
-
-`问题`：如果填写 `query` 参数，提示错误`Exception message:java.sql.SQLSyntaxErrorException: ORA-00911: invalid character`，影响版本 JDP 3.2 及以下版本。修复于 JDP 3.3+，FusinoDB 0.1.1 版本。
-
-`解决`：绕过的方案 dbtable 中填写括号括起来的子查询即可。其他数据库遇到类似问题亦可使用此种方法解决。
+关于 `Oracle，Greenplum，DB2，SQLServer，Teradata，Data Lake` 使用示例。请参阅[Data Sources](http://www.fusionlab.cn/zh-cn/fdb/data-sources.html)
 
 3. Save table to HDFS
 
@@ -407,13 +329,7 @@ SELECT * FROM tt1;
 
 注意：选中想要执行的语句，点击运行按钮进行 FQL 的执行。此工具选中多条 FQL 执行时，逗号分隔，不支持执行，由于是第三方工具，目前暂未修复此问题。
 
-`JDBC URL Reference`：
-
-- [Specifying a JDBC name and URL 8.2.0](https://www.ibm.com/support/knowledgecenter/SS69YH_8.2.0/cads_manager_ddita/model_management/thick/idh_dlg_datasource_jdbc_name.html)
-
-- [Specifying a JDBC name and URL 10.1.1](https://www.ibm.com/support/knowledgecenter/en/SSEP7J_10.1.1/com.ibm.swg.ba.cognos.vvm_ag_guide.10.1.1.doc/c_ag_samjdcurlform.html)
-
-### FusionDB Join Pandas
+##### FusionDB Join Pandas
 
 1. Psycopg2 connecting FDB
 
