@@ -16,8 +16,9 @@ index:
   feature21: "简单易用"
   feature31: "实时数据分析"
   feature32: "实时数据聚合"
-  getstart: "Ad-Hoc Query"
-  readmore: "可视化报表"
+  quickview: "可视化报表"
+  getstart: "快速启动"
+  readmore: "阅读更多"
 
 header:
   translations: "切换语言"
