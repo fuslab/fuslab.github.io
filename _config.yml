@@ -5,7 +5,7 @@ language:
 - zh-cn
 - en
 timezone: UTC
-url: http://fusiondb.github.io
+url: http://fuslab.github.io
 # 文件路径
 root: /
 archive_dir: news
@@ -36,5 +36,5 @@ skip_render:
 deploy:
   type: git
   # 仓库地址需要换成个人的
-  repo: git@github.com:FusionDB/fusiondb.github.io.git
+  repo: git@github.com:fuslab/fuslab.github.io.git
   branch: master
