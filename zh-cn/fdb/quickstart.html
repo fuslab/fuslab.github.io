@@ -68,7 +68,7 @@
 <li>JDP 一体化的产品，可视化的根据安装向导进行安装。</li>
 </ul>
 <p><a href="https://github.com/FusionDB/fql-training" target="_blank" rel="noopener">Docker 安装请参阅</a></p>
-<p><a href="http://www.fusionlab.cn/zh-cn/docs/intro/quickstart.html" target="_blank" rel="noopener">JDP 可视化安装参阅</a></p>
+<p><a href="http://fuslab.github.io/zh-cn/docs/intro/quickstart.html" target="_blank" rel="noopener">JDP 可视化安装参阅</a></p>
 <h2 id="快速访问"><a class="markdown-anchor" href="#快速访问">#</a> 快速访问</h2>
 <p>FusionDB 是一个分布式的 OLAP 数据库，兼容 PostgreSQL 协议。用户可以使用标准的JDBC/ODBC 和 FusionDB 进行交互，示例如下：</p>
 <ul>
@@ -110,7 +110,7 @@
 <li>passowrd: 123456</li>
 <li>database: default</li>
 </ul>
-<p><img src="http://www.fusionlab.cn/zh-cn/fdb/img/psequel-gui.png" alt="FusionDB GUI"></p>
+<p><img src="http://fuslab.github.io/zh-cn/fdb/img/psequel-gui.png" alt="FusionDB GUI"></p>
 <p><code>注意</code>：使用 Mac 版本进行测试，连接 <code>Use SSL</code> 选项不勾选，默认即可，目前还未支持 <code>Use SSL</code>模式。</p>
 <p>如下几个简单的示例，让我们来快速认识 FusionDB SQL 语法吧。</p>
 <h5 id="fusiondb-join-psequel"><a class="markdown-anchor" href="#fusiondb-join-psequel">#</a> FusionDB Join Psequel</h5>
@@ -137,7 +137,7 @@
 <li>Load datasource in query</li>
 </ul>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Case1: query all data</span><br><span class="line"></span><br><span class="line">load &apos;mysql&apos; options(&apos;url&apos;=&apos;jdbc:mysql://your_hostname:53306/test&apos;,&apos;dbtable&apos;=&apos;t1&apos;,&apos;user&apos;=&apos;root&apos;,&apos;password&apos;=&apos;root&apos;) AS mysql_t2;</span><br><span class="line"></span><br><span class="line">SELECT * FROM mysql_t2;</span><br><span class="line"></span><br><span class="line">Case2: query supports pushdown</span><br><span class="line"></span><br><span class="line">load &apos;mysql&apos; options(&apos;url&apos;=&apos;jdbc:mysql://your_hostname:53306/test&apos;,&apos;query&apos;=&apos;select * from test.t1 where id=2&apos;,&apos;user&apos;=&apos;root&apos;,&apos;password&apos;=&apos;root&apos;) AS mysql_t2;</span><br><span class="line"></span><br><span class="line">SELECT * FROM mysql_t2;</span><br></pre></td></tr></table></figure></p>
-<p>关于 <code>Oracle，Greenplum，DB2，SQLServer，Teradata，Data Lake</code> 使用示例。请参阅<a href="http://www.fusionlab.cn/zh-cn/fdb/data-sources.html" target="_blank" rel="noopener">Data Sources</a></p>
+<p>关于 <code>Oracle，Greenplum，DB2，SQLServer，Teradata，Data Lake</code> 使用示例。请参阅<a href="http://fuslab.github.io/zh-cn/fdb/data-sources.html" target="_blank" rel="noopener">Data Sources</a></p>
 <ol start="3">
 <li>Save table to HDFS</li>
 </ol>
